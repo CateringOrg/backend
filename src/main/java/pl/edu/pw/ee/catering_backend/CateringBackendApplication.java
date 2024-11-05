@@ -8,8 +8,8 @@ import org.springframework.modulith.Modulithic;
 @SpringBootApplication
 public class CateringBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CateringBackendApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(CateringBackendApplication.class, args);
+  }
 
 }
