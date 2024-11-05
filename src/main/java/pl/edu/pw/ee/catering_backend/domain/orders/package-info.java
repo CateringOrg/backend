@@ -1,5 +1,6 @@
 @org.springframework.modulith.ApplicationModule(
 		type = org.springframework.modulith.ApplicationModule.Type.CLOSED,
-		displayName = "authentication"
+		displayName = "orders",
+		allowedDependencies = "offers"
 )
-package pl.edu.pw.ee.catering_backend.authentication;
+package pl.edu.pw.ee.catering_backend.domain.orders;

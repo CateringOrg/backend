@@ -2,4 +2,4 @@
 		type = org.springframework.modulith.ApplicationModule.Type.CLOSED,
 		displayName = "offers"
 )
-package pl.edu.pw.ee.catering_backend.offers;
+package pl.edu.pw.ee.catering_backend.domain;
