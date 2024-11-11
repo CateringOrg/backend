@@ -8,30 +8,37 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
 @Entity
-@Table(name = "orders_table")
 @Data
-public class Order {
+public class MealDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  private String deliveryAddress;
-  private String deliveryMethod;
-  private String status;
+  private Boolean available;
+
+  private String description;
+
+  @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PhotoUrl> photoUrls;
+
+  private BigDecimal price;
 
   @ManyToMany
-  private List<MealDb> meals;
+  private List<Cart> carts;
+
+  @ManyToMany
+  private List<Order> orders;
 
   @ManyToOne(optional = false)
-  private Client client;
+  private CateringCompanyDb cateringCompany;
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Complaint> complaint;
+  @OneToMany
+  private List<Review> reviews;
 }

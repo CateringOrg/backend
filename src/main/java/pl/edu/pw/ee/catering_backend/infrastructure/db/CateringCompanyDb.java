@@ -4,23 +4,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
 @Entity
 @Data
-public class Cart {
+public class CateringCompanyDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @ManyToMany
-  private List<MealDb> meals;
+  private String address;
+  private String name;
+  private String nip;
 
-  @OneToOne(optional = false)
-  private Client client;
+  @OneToMany(mappedBy = "cateringCompany")
+  private List<MealDb> meals;
 }

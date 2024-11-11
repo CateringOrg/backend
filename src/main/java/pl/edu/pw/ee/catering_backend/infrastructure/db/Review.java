@@ -20,7 +20,7 @@ public class Review {
   private Integer rate;
 
   @ManyToOne(optional = false)
-  private Meal meal;
+  private MealDb meal;
 
   @ManyToOne(optional = false)
   private Client client;

@@ -1,0 +1,10 @@
+package pl.edu.pw.ee.catering_backend.authentication.application;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthorizationController {
+
+}

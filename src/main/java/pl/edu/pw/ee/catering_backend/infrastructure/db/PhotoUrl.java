@@ -17,5 +17,5 @@ public class PhotoUrl {
   private UUID id;
 
   @ManyToOne(optional = false)
-  private Meal meal;
+  private MealDb meal;
 }
