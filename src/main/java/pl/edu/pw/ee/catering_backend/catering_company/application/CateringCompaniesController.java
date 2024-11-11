@@ -1,5 +1,8 @@
 package pl.edu.pw.ee.catering_backend.catering_company.application;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +26,11 @@ public class CateringCompaniesController implements IManagerCateringCompanyData 
 
   @Override
   @PostMapping
+  @Operation(summary = "Add new catering company")
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Company added successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid company data")
+  })
   public ResponseEntity<Void> addCateringCompany(@RequestBody AddCateringCompanyDTO dto) {
     cateringCompaniesManagementService.addNewCompany(
         cateringCompanyDtoMapper.toCateringCompany(dto));
@@ -31,6 +39,11 @@ public class CateringCompaniesController implements IManagerCateringCompanyData 
 
   @Override
   @PutMapping
+  @Operation(summary = "Validate catering company data")
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Company data validated successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid company data")
+  })
   public ResponseEntity<Void> validateCateringCompany(@RequestBody AddCateringCompanyDTO dto) {
     cateringCompaniesManagementService.validateCompanyData(
         cateringCompanyDtoMapper.toCateringCompany(dto));
