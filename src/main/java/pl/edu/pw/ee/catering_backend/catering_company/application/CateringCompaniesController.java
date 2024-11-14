@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.pw.ee.catering_backend.catering_company.comms.CateringCompanyMapper;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.IManagerCateringCompanyData;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.dtos.AddCateringCompanyDTO;
-import pl.edu.pw.ee.catering_backend.catering_company.comms.dtos.CateringCompanyDtoMapper;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompaniesManagementService;
 
 @RestController
@@ -22,7 +22,7 @@ import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompaniesM
 public class CateringCompaniesController implements IManagerCateringCompanyData {
 
   private final ICateringCompaniesManagementService cateringCompaniesManagementService;
-  private final CateringCompanyDtoMapper cateringCompanyDtoMapper;
+  private final CateringCompanyMapper cateringCompanyMapper;
 
   @Override
   @PostMapping
@@ -33,7 +33,7 @@ public class CateringCompaniesController implements IManagerCateringCompanyData 
   })
   public ResponseEntity<Void> addCateringCompany(@RequestBody AddCateringCompanyDTO dto) {
     cateringCompaniesManagementService.addNewCompany(
-        cateringCompanyDtoMapper.toCateringCompany(dto));
+        cateringCompanyMapper.toCateringCompany(dto));
     return ResponseEntity.noContent().build();
   }
 
@@ -46,7 +46,7 @@ public class CateringCompaniesController implements IManagerCateringCompanyData 
   })
   public ResponseEntity<Void> validateCateringCompany(@RequestBody AddCateringCompanyDTO dto) {
     cateringCompaniesManagementService.validateCompanyData(
-        cateringCompanyDtoMapper.toCateringCompany(dto));
+        cateringCompanyMapper.toCateringCompany(dto));
     return ResponseEntity.noContent().build();
   }
 }

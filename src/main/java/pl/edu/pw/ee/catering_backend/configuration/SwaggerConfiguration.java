@@ -41,9 +41,20 @@ public class SwaggerConfiguration {
   }
 
   @Bean
-  public GroupedOpenApi authApi() {
-    return GroupedOpenApi.builder().group("catering-companies").displayName("Catering Companies")
-        .pathsToMatch("/catering-companies").build();
+  public GroupedOpenApi cateringCompaniesApi() {
+    return GroupedOpenApi.builder()
+            .group("catering-companies")
+            .displayName("Catering Companies")
+            .pathsToMatch("/catering-companies/**")
+            .build();
   }
 
+  @Bean
+  public GroupedOpenApi offersApi() {
+    return GroupedOpenApi.builder()
+            .group("offers")
+            .displayName("Offers")
+            .pathsToMatch("/offers/**")
+            .build();
+  }
 }

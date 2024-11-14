@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import java.util.UUID;
+
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
@@ -15,6 +17,9 @@ public class PhotoUrl {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+
+  @NotBlank
+  private String url;
 
   @ManyToOne(optional = false)
   private MealDb meal;
