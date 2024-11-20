@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
-@Entity
+@Entity(name = "catering_companies")
 @Data
-public class CateringCompanyDb {
+public class CateringCompany {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,5 +22,5 @@ public class CateringCompanyDb {
   private String nip;
 
   @OneToMany(mappedBy = "cateringCompany")
-  private List<MealDb> meals;
+  private List<Meal> meals;
 }

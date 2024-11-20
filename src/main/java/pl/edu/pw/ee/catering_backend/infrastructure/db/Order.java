@@ -5,16 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
-@Entity
-@Table(name = "orders_table")
+@Entity(name = "orders")
 @Data
 public class Order {
 
@@ -26,12 +25,13 @@ public class Order {
   private String deliveryMethod;
   private String status;
 
-  @ManyToMany
-  private List<MealDb> meals;
+  @ManyToMany(mappedBy = "orders")
+  private List<Meal> meals;
 
   @ManyToOne(optional = false)
+  @JoinColumn(name = "client_login")
   private Client client;
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
   private List<Complaint> complaint;
 }

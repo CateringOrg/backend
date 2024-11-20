@@ -4,13 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-@Entity
+@Entity(name = "photos_urls")
 @Data
 public class PhotoUrl {
 
@@ -22,5 +23,6 @@ public class PhotoUrl {
   private String url;
 
   @ManyToOne(optional = false)
-  private MealDb meal;
+  @JoinColumn(name = "meal_id")
+  private Meal meal;
 }

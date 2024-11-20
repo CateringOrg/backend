@@ -6,12 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
 
-@Entity
-@Table(name = "clients_table")
+@Entity(name = "clients")
 @Data
 public class Client {
 
@@ -24,7 +22,7 @@ public class Client {
   @Embedded
   private Wallet wallet;
 
-  @OneToOne(optional = false)
+  @OneToOne(optional = false, mappedBy = "client")
   private Cart cart;
 
   @OneToMany(mappedBy = "client")

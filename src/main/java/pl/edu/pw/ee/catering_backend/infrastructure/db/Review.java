@@ -4,11 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.UUID;
 import lombok.Data;
 
-@Entity
+@Entity(name = "reviews")
 @Data
 public class Review {
 
@@ -20,8 +21,10 @@ public class Review {
   private Integer rate;
 
   @ManyToOne(optional = false)
-  private MealDb meal;
+  @JoinColumn(name = "meal_id")
+  private Meal meal;
 
   @ManyToOne(optional = false)
+  @JoinColumn(name = "client_login")
   private Client client;
 }

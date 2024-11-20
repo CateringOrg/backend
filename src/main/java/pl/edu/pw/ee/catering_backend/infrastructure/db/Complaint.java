@@ -4,11 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.Data;
 
-@Entity
+@Entity(name = "complaints")
 @Data
 public class Complaint {
 
@@ -20,8 +21,10 @@ public class Complaint {
   private LocalDate creationDate;
 
   @ManyToOne(optional = false)
+  @JoinColumn(name = "client_login")
   private Client client;
 
   @ManyToOne(optional = false)
+  @JoinColumn(name = "order_id")
   private Order order;
 }

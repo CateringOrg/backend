@@ -6,9 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.springframework.stereotype.Service;
-import pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.CateringCompanyDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.CateringCompany;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
 
 @RequiredArgsConstructor
@@ -19,13 +18,14 @@ class CateringCompanyJpaPersistenceService implements ICateringCompanyPersistenc
   private final CateringCompanyDbMapper cateringCompanyDbMapper;
 
   @Override
-  public CateringCompany save(CateringCompany cateringCompany) {
+  public pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany save(
+      pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany cateringCompany) {
     return cateringCompanyDbMapper.mapToDomain(
         cateringCompanyRepository.save(cateringCompanyDbMapper.mapToDb(cateringCompany)));
   }
 
   @Override
-  public CateringCompany get(UUID id) {
+  public pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany get(UUID id) {
     return cateringCompanyDbMapper.mapToDomain(
         cateringCompanyRepository.findById(id).orElseThrow());
   }
@@ -34,11 +34,11 @@ class CateringCompanyJpaPersistenceService implements ICateringCompanyPersistenc
   interface CateringCompanyDbMapper {
 
     @Mapping(target = "NIP", source = "nip")
-    CateringCompany mapToDomain(
-        CateringCompanyDb cateringCompanyDb);
+    pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany mapToDomain(
+        CateringCompany cateringCompany);
 
     @Mapping(target = "nip", source = "NIP")
-    CateringCompanyDb mapToDb(
-        CateringCompany cateringCompany);
+    CateringCompany mapToDb(
+        pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany cateringCompany);
   }
 }

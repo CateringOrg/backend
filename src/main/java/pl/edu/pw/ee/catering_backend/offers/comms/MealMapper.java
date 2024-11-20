@@ -4,10 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.CateringCompanyMapper;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
-import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,14 +17,14 @@ public interface MealMapper {
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "available", constant = "true")
-  MealDb mapToDb(Meal meal);
+  Meal mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "cateringCompany", ignore = true)
-  Meal mapToDomain(AddMealDTO addMealDTO);
+  pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(AddMealDTO addMealDTO);
 
   @Mapping(target = "cateringCompany", ignore = true)
-  Meal mapToDomain(MealDb mealDb);
+  pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(Meal meal);
 
   default List<PhotoUrl> mapPhotoUrls(List<String> urls) {
     if (urls == null) {

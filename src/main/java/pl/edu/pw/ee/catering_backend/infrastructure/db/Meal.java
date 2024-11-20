@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -13,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
-@Entity
+@Entity(name = "meals")
 @Data
-public class MealDb {
+public class Meal {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,14 +33,23 @@ public class MealDb {
   private BigDecimal price;
 
   @ManyToMany
+  @JoinTable(name = "meal_carts",
+      joinColumns = @JoinColumn(name = "meal_id"),
+      inverseJoinColumns = @JoinColumn(name = "cart_id")
+  )
   private List<Cart> carts;
 
   @ManyToMany
+  @JoinTable(name = "meal_orders",
+      joinColumns = @JoinColumn(name = "meal_id"),
+      inverseJoinColumns = @JoinColumn(name = "order_id")
+  )
   private List<Order> orders;
 
   @ManyToOne(optional = false)
-  private CateringCompanyDb cateringCompany;
+  @JoinColumn(name = "catering_company_id")
+  private CateringCompany cateringCompany;
 
-  @OneToMany
+  @OneToMany(mappedBy = "meal")
   private List<Review> reviews;
 }
