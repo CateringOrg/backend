@@ -7,3 +7,13 @@ services:
       - 'POSTGRES_USER=user'
     ports:
       - '5432:5432'
+  app:
+    build: .
+    profiles:
+      - java-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
