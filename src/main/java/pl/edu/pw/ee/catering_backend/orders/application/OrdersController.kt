@@ -31,7 +31,9 @@ class OrdersController {
 
         return result.fold(
             { ResponseEntity.ok(OrderCreationResponse(it)) },
-            { ResponseEntity.badRequest().build() }
+            {
+                ResponseEntity.badRequest().body(OrderCreationResponse(it.message ?: "Unknown error"))
+            }
         )
     }
 }
