@@ -7,6 +7,7 @@ import pl.edu.pw.ee.catering_backend.catering_company.comms.CateringCompanyMappe
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
+import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,28 +15,34 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = ComponentModel.SPRING, uses = {CateringCompanyMapper.class})
 public interface MealMapper {
+    @Mapping(target = "cateringCompanyName", source = "cateringCompany.name")
+    GetMealDTO mapToGetMealDTO(Meal meal);
 
-  @Mapping(target = "id", ignore = true)
-  @Mapping(target = "available", constant = "true")
-  Meal mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "available", constant = "true")
+    Meal mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
 
-  @Mapping(target = "id", ignore = true)
-  @Mapping(target = "cateringCompany", ignore = true)
-  pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(AddMealDTO addMealDTO);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "cateringCompany", ignore = true)
+    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(AddMealDTO addMealDTO);
 
-  @Mapping(target = "cateringCompany", ignore = true)
-  pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(Meal meal);
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "description", source = "description")
+    @Mapping(target = "price", source = "price")
+    @Mapping(target = "photoUrls", source = "photoUrls")
+    @Mapping(target = "cateringCompany", source = "cateringCompany")
+    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(Meal dbMeal);
 
-  default List<PhotoUrl> mapPhotoUrls(List<String> urls) {
-    if (urls == null) {
-      return Collections.emptyList();
+    default List<PhotoUrl> mapPhotoUrls(List<String> urls) {
+        if (urls == null) {
+            return Collections.emptyList();
+        }
+        return urls.stream()
+                .map(url -> {
+                    PhotoUrl photoUrl = new PhotoUrl();
+                    photoUrl.setUrl(url);
+                    return photoUrl;
+                })
+                .collect(Collectors.toList());
     }
-    return urls.stream()
-            .map(url -> {
-              PhotoUrl photoUrl = new PhotoUrl();
-              photoUrl.setUrl(url);
-              return photoUrl;
-            })
-            .collect(Collectors.toList());
-  }
 }
