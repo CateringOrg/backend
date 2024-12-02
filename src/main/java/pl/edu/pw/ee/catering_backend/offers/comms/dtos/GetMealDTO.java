@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,4 +14,5 @@ public class GetMealDTO {
     private String description;
     private BigDecimal price;
     private String cateringCompanyName;
+    private List<String> photoUrls;
 }

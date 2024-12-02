@@ -16,7 +16,17 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = ComponentModel.SPRING, uses = {CateringCompanyMapper.class})
 public interface MealMapper {
     @Mapping(target = "cateringCompanyName", source = "cateringCompany.name")
+    @Mapping(target = "photoUrls", source = "photoUrls")
     GetMealDTO mapToGetMealDTO(Meal meal);
+
+    default List<String> mapPhotoUrlsToStrings(List<PhotoUrl> photoUrls) {
+        if (photoUrls == null) {
+            return Collections.emptyList();
+        }
+        return photoUrls.stream()
+                .map(PhotoUrl::getUrl)
+                .collect(Collectors.toList());
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "available", constant = "true")
