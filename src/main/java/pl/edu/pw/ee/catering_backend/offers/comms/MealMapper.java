@@ -15,9 +15,10 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = ComponentModel.SPRING, uses = {CateringCompanyMapper.class})
 public interface MealMapper {
+
     @Mapping(target = "cateringCompanyName", source = "cateringCompany.name")
     @Mapping(target = "photoUrls", source = "photoUrls")
-    GetMealDTO mapToGetMealDTO(Meal meal);
+    GetMealDTO mapToGetMealDTO(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
 
     default List<String> mapPhotoUrlsToStrings(List<PhotoUrl> photoUrls) {
         if (photoUrls == null) {

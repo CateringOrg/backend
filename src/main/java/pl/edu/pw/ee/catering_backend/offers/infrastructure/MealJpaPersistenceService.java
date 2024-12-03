@@ -7,6 +7,8 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealReposito
 import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MealJpaPersistenceService implements IMealsPersistenceService {
@@ -26,5 +28,12 @@ public class MealJpaPersistenceService implements IMealsPersistenceService {
     return mealMapper.mapToDomain(
             mealRepository.save(mealDb)
     );
+  }
+
+  @Override
+  public List<pl.edu.pw.ee.catering_backend.offers.domain.Meal> getMeals() {
+    return mealRepository.findAll().stream()
+        .map(mealMapper::mapToDomain)
+        .collect(java.util.stream.Collectors.toList());
   }
 }

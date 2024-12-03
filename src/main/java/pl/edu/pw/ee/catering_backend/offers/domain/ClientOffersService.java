@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 @Service
 public class ClientOffersService implements IClientOffersService {
 
-    private final MealRepository mealRepository;
     private final MealMapper mealMapper;
 
-    public ClientOffersService(MealRepository mealRepository, MealMapper mealMapper) {
-        this.mealRepository = mealRepository;
+    private final IMealsPersistenceService mealsPersistenceService;
+
+    public ClientOffersService(MealRepository mealRepository, MealMapper mealMapper, IMealsPersistenceService mealsPersistenceService) {
         this.mealMapper = mealMapper;
+        this.mealsPersistenceService = mealsPersistenceService;
     }
 
     @Override
     public List<GetMealDTO> getMeals() {
-        return mealRepository.findAll().stream()
+        return mealsPersistenceService.getMeals().stream()
                 .map(mealMapper::mapToGetMealDTO)
-                .collect(Collectors.toList());
-    }
+                .collect(Collectors.toList());    }
 }
