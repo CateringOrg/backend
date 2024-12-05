@@ -22,7 +22,7 @@ public class Client {
   @Embedded
   private Wallet wallet;
 
-  @OneToOne(optional = false, mappedBy = "client")
+  @OneToOne(optional = true, mappedBy = "client")
   private Cart cart;
 
   @OneToMany(mappedBy = "client")

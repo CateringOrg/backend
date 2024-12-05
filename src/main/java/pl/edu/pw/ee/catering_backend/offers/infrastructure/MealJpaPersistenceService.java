@@ -8,6 +8,8 @@ import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class MealJpaPersistenceService implements IMealsPersistenceService {
 
   @Override
   public pl.edu.pw.ee.catering_backend.offers.domain.Meal save(
-      pl.edu.pw.ee.catering_backend.offers.domain.Meal meal) {
+          pl.edu.pw.ee.catering_backend.offers.domain.Meal meal) {
     Meal mealDb = mealMapper.mapToDb(meal);
 
     if (mealDb.getPhotoUrls() != null) {
@@ -33,7 +35,14 @@ public class MealJpaPersistenceService implements IMealsPersistenceService {
   @Override
   public List<pl.edu.pw.ee.catering_backend.offers.domain.Meal> getMeals() {
     return mealRepository.findAll().stream()
-        .map(mealMapper::mapToDomain)
-        .collect(java.util.stream.Collectors.toList());
+            .map(mealMapper::mapToDomain)
+            .collect(java.util.stream.Collectors.toList());
+  }
+
+  @Override
+  public pl.edu.pw.ee.catering_backend.offers.domain.Meal getById(UUID id) {
+    return mealRepository.findById(id)
+            .map(mealMapper::mapToDomain)
+            .orElseThrow(() -> new NoSuchElementException("Meal with ID " + id + " not found"));
   }
 }

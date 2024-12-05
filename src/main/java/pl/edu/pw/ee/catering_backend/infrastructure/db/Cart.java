@@ -22,7 +22,7 @@ public class Cart {
   @ManyToMany(mappedBy = "carts")
   private List<Meal> meals;
 
-  @OneToOne(optional = false)
+  @OneToOne(optional = true)
   @JoinColumn(name = "client_login")
   private Client client;
 }

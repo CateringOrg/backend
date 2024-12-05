@@ -1,6 +1,6 @@
 @org.springframework.modulith.ApplicationModule(
     type = org.springframework.modulith.ApplicationModule.Type.CLOSED,
-    displayName = "orders",
+    displayName = "cart",
     allowedDependencies = "offers"
 )
-package pl.edu.pw.ee.catering_backend.orders;
+package pl.edu.pw.ee.catering_backend.cart;
