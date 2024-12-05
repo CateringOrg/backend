@@ -37,7 +37,7 @@ public interface CartMapper {
                 .collect(Collectors.toList());
     }
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source="id")
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "meals", source = "meals")
     pl.edu.pw.ee.catering_backend.infrastructure.db.Cart mapToDb(Cart cart);

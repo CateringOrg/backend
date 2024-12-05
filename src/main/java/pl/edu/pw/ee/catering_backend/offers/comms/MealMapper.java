@@ -29,7 +29,7 @@ public interface MealMapper {
                 .collect(Collectors.toList());
     }
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source="id")
     @Mapping(target = "available", constant = "true")
     Meal mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
 

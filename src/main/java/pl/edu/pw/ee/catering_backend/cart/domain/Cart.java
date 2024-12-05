@@ -19,7 +19,7 @@ public class Cart {
 
     private UUID id;
 
-    @Nullable
+    @NotNull
     private String clientLogin;
 
     @NotNull
