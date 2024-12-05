@@ -1,16 +1,15 @@
 package pl.edu.pw.ee.catering_backend.cart.domain;
 
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
+import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartDTO;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Client;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
-import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
-import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartDTO;
 import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
-
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ class ClientCartService implements IClientCartService {
                     newCart.setId(UUID.randomUUID());
                     newCart.setClientLogin(clientLogin);
                     newCart.validate();
-                    return cartPersistenceService.save(newCart);
+                  return newCart;
                 });
 
         Meal meal = mealsPersistenceService.getById(mealId);
