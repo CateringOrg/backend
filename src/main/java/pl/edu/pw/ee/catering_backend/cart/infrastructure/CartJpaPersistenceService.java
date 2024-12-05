@@ -1,5 +1,6 @@
 package pl.edu.pw.ee.catering_backend.cart.infrastructure;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.domain.ICartPersistenceService;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.Cart;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Client;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CartRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
+import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
     private final CartRepository cartRepository;
     private final MealRepository mealRepository;
     private final CartMapper cartMapper;
+    private final MealMapper mealMapper;
     private final ClientRepository clientRepository;
 
     @Override
@@ -41,7 +45,14 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
 
         dbCart.setMeals(managedMeals);
 
-        dbCart.getMeals().forEach(meal -> meal.getCarts().add(dbCart));
+        dbCart.getMeals().forEach(meal -> {
+            if (meal.getCarts() == null) {
+                meal.setCarts(new ArrayList<>());
+            }
+            if (meal.getCarts().stream().map(Cart::getId).noneMatch(cartId -> dbCart.getId().equals(cartId))) {
+                meal.getCarts().add(dbCart);
+            }
+        });
 
         pl.edu.pw.ee.catering_backend.infrastructure.db.Cart savedDbCart = cartRepository.save(dbCart);
 

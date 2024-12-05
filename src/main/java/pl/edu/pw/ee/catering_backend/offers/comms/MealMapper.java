@@ -1,5 +1,8 @@
 package pl.edu.pw.ee.catering_backend.offers.comms;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
@@ -8,10 +11,6 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = ComponentModel.SPRING, uses = {CateringCompanyMapper.class})
 public interface MealMapper {

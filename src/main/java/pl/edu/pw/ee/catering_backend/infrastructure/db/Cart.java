@@ -10,9 +10,11 @@ import jakarta.persistence.OneToOne;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity(name = "carts")
 @Data
+@ToString(exclude = {"meals", "client"})
 public class Cart {
 
   @Id

@@ -29,10 +29,9 @@ class ClientCartService implements IClientCartService {
         Cart cart = cartPersistenceService.getByClientLogin(clientLogin)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
-                    newCart.setId(UUID.randomUUID());
                     newCart.setClientLogin(clientLogin);
                     newCart.validate();
-                  return newCart;
+                  return cartPersistenceService.save(newCart);
                 });
 
         Meal meal = mealsPersistenceService.getById(mealId);
@@ -52,7 +51,6 @@ class ClientCartService implements IClientCartService {
         Cart cart = cartPersistenceService.getByClientLogin(clientLogin)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
-                    newCart.setId(UUID.randomUUID());
                     newCart.setClientLogin(clientLogin);
                     newCart.validate();
                     return cartPersistenceService.save(newCart);

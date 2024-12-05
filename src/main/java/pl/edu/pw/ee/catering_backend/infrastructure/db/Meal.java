@@ -14,9 +14,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity(name = "meals")
 @Data
+@ToString(exclude = {"photoUrls", "carts", "orders", "cateringCompany", "reviews"})
 public class Meal {
 
   @Id

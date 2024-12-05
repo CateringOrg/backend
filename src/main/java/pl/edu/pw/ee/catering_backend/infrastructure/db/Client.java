@@ -8,9 +8,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.List;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity(name = "clients")
 @Data
+@ToString(exclude = {"cart", "reviews", "complaints", "orders"})
 public class Client {
 
   @Id
