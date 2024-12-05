@@ -2,7 +2,6 @@ package pl.edu.pw.ee.catering_backend.configuration;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -55,8 +54,8 @@ public class InitialStatePreparationConfig {
             meal.setAvailable(true);
             meal.setCateringCompany(cateringCompanyRepository.findById(
                     UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
-            mealRepository.save(meal);
-            log.info("Meal initialized!");
+            var m = mealRepository.save(meal);
+            log.info("Meal initialized {}!", m.getId());
 
             log.info("Initialization done!");
         } catch (Exception e) {
