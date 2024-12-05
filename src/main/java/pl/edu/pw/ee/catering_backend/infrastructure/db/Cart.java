@@ -10,9 +10,11 @@ import jakarta.persistence.OneToOne;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity(name = "carts")
 @Data
+@ToString(exclude = {"meals", "client"})
 public class Cart {
 
   @Id
@@ -22,7 +24,7 @@ public class Cart {
   @ManyToMany(mappedBy = "carts")
   private List<Meal> meals;
 
-  @OneToOne(optional = false)
+  @OneToOne(optional = true)
   @JoinColumn(name = "client_login")
   private Client client;
 }

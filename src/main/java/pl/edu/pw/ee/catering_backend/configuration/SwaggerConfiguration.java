@@ -57,4 +57,13 @@ public class SwaggerConfiguration {
             .pathsToMatch("/offers/**")
             .build();
   }
+
+  @Bean
+  public GroupedOpenApi cartApi() {
+    return GroupedOpenApi.builder()
+            .group("cart")
+            .displayName("Cart")
+            .pathsToMatch("/cart/**")
+            .build();
+  }
 }
