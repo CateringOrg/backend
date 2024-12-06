@@ -10,14 +10,6 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderReposit
 import java.util.*
 
 interface OrdersService {
-    fun createOrder(
-        client: Client,
-        mealsIds: List<Meal>,
-        deliveryAddress: String,
-        deliveryMethod: String,
-        status: String,
-    ): Result<Unit>
-
     fun deleteOrder(
         orderId: Long,
     ): Result<Unit>
@@ -34,6 +26,14 @@ interface OrdersService {
     fun getAllOrders(
         clientLogin: String,
     ): Result<List<Order>>
+
+    fun createOrder(
+        client: Client? = null,
+        mealsIds: List<Meal>,
+        deliveryAddress: String,
+        deliveryMethod: String,
+        status: String
+    ): Result<String>
 }
 
 @Service
@@ -42,12 +42,12 @@ class OrdersServiceImpl(
     @Autowired private val mealRepository: MealRepository,
 ) : OrdersService {
     override fun createOrder(
-        client: Client,
+        client: Client?,
         mealsIds: List<Meal>,
         deliveryAddress: String,
         deliveryMethod: String,
         status: String,
-    ): Result<Unit> {
+    ): Result<String> {
         return try {
             // Save the order to the repository
             ordersRepository.insertOrder(
@@ -55,11 +55,11 @@ class OrdersServiceImpl(
                 deliveryMethod,
                 mealsIds,
                 status,
-                client,
+                null,
             )
-            Result.success(Unit)
+            Result.success(UUID.randomUUID().toString())
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.success(UUID.randomUUID().toString())
         }
     }
 

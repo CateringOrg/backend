@@ -17,6 +17,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Modifying
     @Transactional
-    @Query("INSERT INTO orders (deliveryAddress, deliveryMethod, meals, status, client) VALUES (:deliveryAddress, :deliveryMethod, :meals, :status, :client)")
-    UUID insertOrder(String deliveryAddress, String deliveryMethod, List<Meal> meals, String status, Client client);
+    @Query("insert into orders (deliveryAddress, deliveryMethod, meals, status, client) values (:deliveryAddress, :deliveryMethod, :meals, :status, :client)")
+    Void insertOrder(String deliveryAddress, String deliveryMethod, List<Meal> meals, String status, Client client);
 }
