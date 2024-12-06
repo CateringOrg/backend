@@ -6,6 +6,7 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientReposi
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository
 import pl.edu.pw.ee.catering_backend.orders.data.OrdersService
 import java.util.UUID
+import java.util.logging.Logger
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -21,15 +22,15 @@ class CreateOrderUseCase(
         deliveryMethod: String,
         status: String,
     ): Result<String> {
-        val mealsUUIDs = mealsIds.map {
+        val mealsUUIDs = mealsIds.mapNotNull {
             try {
                 UUID.fromString(it)
             } catch (e: Exception) {
-                return Result.failure(Exception("Invalid meal id: $it"))
+                null
             }
         }
         val meals = mealsRepository.findAllById(mealsUUIDs)
-        val client = clientRepository.findByLogin(clientLogin).getOrNull() ?: return Result.failure(Exception("Client not found"))
+        val client = clientRepository.findByLogin(clientLogin).getOrNull()
 
         if (meals.size != mealsIds.size) {
             return Result.failure(Exception("Some meals not found"))
@@ -41,7 +42,5 @@ class CreateOrderUseCase(
 //        }
 
         return ordersService.createOrder(client, meals, deliveryAddress, deliveryMethod, status)
-            .map { it.toString() }
-
     }
 }

@@ -14,7 +14,8 @@ import kotlin.math.log
 @RestController
 @RequestMapping("/orders")
 class OrdersController {
-    @Autowired private lateinit var createOrderUseCase: CreateOrderUseCase
+    @Autowired
+    private lateinit var createOrderUseCase: CreateOrderUseCase
 
     private val logger = Logger.getLogger(OrdersController::class.java.name)
 
@@ -27,7 +28,7 @@ class OrdersController {
     fun createOrder(@RequestBody request: OrderCreationRequest): ResponseEntity<OrderCreationResponse> {
         if (!areAllArgumentsValid(request)) {
             logger.warning("Invalid arguments")
-            return ResponseEntity.badRequest().body(OrderCreationResponse("Invalid arguments"))
+            return ResponseEntity.badRequest().body(OrderCreationResponse(error = "Invalid arguments"))
         }
         logger.info("Creating order")
 
@@ -40,9 +41,9 @@ class OrdersController {
         )
 
         return result.fold(
-            { ResponseEntity.ok(OrderCreationResponse(it)) },
+            { ResponseEntity.ok(OrderCreationResponse(orderId = it)) },
             {
-                ResponseEntity.badRequest().body(OrderCreationResponse(it.message ?: "Unknown error"))
+                ResponseEntity.badRequest().body(OrderCreationResponse(error = it.message ?: "Unknown error"))
             }
         )
     }
@@ -53,5 +54,6 @@ class OrdersController {
 }
 
 data class OrderCreationResponse(
-    val orderId: String
+    val orderId: String? = null,
+    val error: String? = null,
 )
