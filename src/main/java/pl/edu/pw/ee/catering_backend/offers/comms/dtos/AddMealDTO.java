@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class AddMealDTO {
+  private String name;
   private String description;
   private BigDecimal price;
   private Boolean available;

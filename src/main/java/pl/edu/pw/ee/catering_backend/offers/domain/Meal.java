@@ -18,6 +18,8 @@ public class Meal {
   private UUID id;
 
   @NotBlank
+  private String name;
+
   private String description;
 
   @NotNull

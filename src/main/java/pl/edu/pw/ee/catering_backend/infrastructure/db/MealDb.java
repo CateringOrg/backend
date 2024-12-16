@@ -27,6 +27,8 @@ public class MealDb {
 
   private Boolean available;
 
+  private String name;
+
   private String description;
 
   @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -11,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GetCartMealDTO {
     private UUID id;
+    private String name;
     private String description;
     private BigDecimal price;
     private String cateringCompanyName;
