@@ -13,11 +13,12 @@ import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.domain.Cart;
 import pl.edu.pw.ee.catering_backend.cart.domain.ICartPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CartRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserRepository;
+import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +28,15 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
     private final CartRepository cartRepository;
     private final MealRepository mealRepository;
     private final CartMapper cartMapper;
-    private final ClientRepository clientRepository;
+    private final MealMapper mealMapper;
+    private final UserRepository userRepository;
 
     @Override
     public Cart save(Cart cart) {
 
         CartDb dbCart = cartMapper.mapToDb(cart);
-        ClientDb client = clientRepository.findByLogin(cart.getClientLogin())
-                .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
+        UserDb client = userRepository.findByLogin(cart.getClientLogin())
+            .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
 
         dbCart.setClient(client);
 
@@ -59,6 +61,7 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
         return cartMapper.mapToDomain(savedDbCart);
     }
 
+
     @Override
     public Optional<Cart> get(UUID cartId) {
         return cartRepository.findById(cartId)
@@ -67,6 +70,7 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
                     throw new NoSuchElementException("Cart with ID " + cartId + " not found");
                 });
     }
+
 
     @Override
     public Optional<Cart> getByClientLogin(String clientLogin) {

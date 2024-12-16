@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartDTO;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserRepository;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
 import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 
@@ -16,14 +16,14 @@ import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 class ClientCartService implements IClientCartService {
 
     private final ICartPersistenceService cartPersistenceService;
-    private final ClientRepository clientRepository;
+  private final UserRepository userRepository;
     private final IMealsPersistenceService mealsPersistenceService;
     private final CartMapper cartMapper;
 
     @Override
     public void addMealToCart(String clientLogin, UUID mealId) {
 
-        ClientDb client = clientRepository.findByLogin(clientLogin)
+      UserDb client = userRepository.findByLogin(clientLogin)
                 .orElseThrow(() -> new NoSuchElementException("Client with login " + clientLogin + " not found"));
 
         Cart cart = cartPersistenceService.getByClientLogin(clientLogin)
@@ -45,7 +45,7 @@ class ClientCartService implements IClientCartService {
     @Override
     public GetCartDTO getCartByClientLogin(String clientLogin) {
 
-        clientRepository.findByLogin(clientLogin)
+      userRepository.findByLogin(clientLogin)
                 .orElseThrow(() -> new NoSuchElementException("Client with login " + clientLogin + " not found"));
 
         Cart cart = cartPersistenceService.getByClientLogin(clientLogin)

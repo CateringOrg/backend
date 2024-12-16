@@ -26,5 +26,5 @@ public class CartDb {
 
   @OneToOne(optional = true)
   @JoinColumn(name = "client_login")
-  private ClientDb client;
+  private UserDb client;
 }

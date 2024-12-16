@@ -26,5 +26,5 @@ public class ReviewDb {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private ClientDb client;
+  private UserDb client;
 }

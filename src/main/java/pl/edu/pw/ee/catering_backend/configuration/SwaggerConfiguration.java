@@ -66,4 +66,13 @@ public class SwaggerConfiguration {
             .pathsToMatch("/cart/**")
             .build();
   }
+
+  @Bean
+  public GroupedOpenApi authApi() {
+    return GroupedOpenApi.builder()
+        .group("auth")
+        .displayName("auth")
+        .pathsToMatch("/auth/**")
+        .build();
+  }
 }

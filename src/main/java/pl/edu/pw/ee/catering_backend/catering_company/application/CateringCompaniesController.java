@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.CateringCompanyMapper;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.IManagerCateringCompanyData;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.dtos.AddCateringCompanyDTO;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/catering-companies")
-//@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequiredArgsConstructor
 public class CateringCompaniesController implements IManagerCateringCompanyData {
 

@@ -22,7 +22,7 @@ public class ComplaintDb {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private ClientDb client;
+  private UserDb client;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "order_id")
