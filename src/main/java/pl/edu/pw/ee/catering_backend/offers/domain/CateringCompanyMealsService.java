@@ -21,7 +21,7 @@ class CateringCompanyMealsService implements ICateringCompanyMealsService {
   @Override
   public Meal addMeal(UUID cateringCompanyId, AddMealDTO addMealDTO) {
     Meal meal = mealMapper.mapToDomain(addMealDTO);
-    var cateringCompany = cateringCompanyPersistenceService.get(cateringCompanyId);
+    var cateringCompany = cateringCompanyPersistenceService.getById(cateringCompanyId);
 
     meal.setCateringCompany(cateringCompany);
     meal.validate();
