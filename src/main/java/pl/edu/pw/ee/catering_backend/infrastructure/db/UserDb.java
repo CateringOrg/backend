@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import java.util.List;
 import lombok.Data;
 import lombok.ToString;
+import pl.edu.pw.ee.catering_backend.user.domain.AppRole;
 
 @Entity(name = "users")
 @Data

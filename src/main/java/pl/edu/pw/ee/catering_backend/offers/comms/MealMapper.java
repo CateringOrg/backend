@@ -11,13 +11,14 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
+import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 
 @Mapper(componentModel = ComponentModel.SPRING, uses = {CateringCompanyMapper.class})
 public interface MealMapper {
 
     @Mapping(target = "cateringCompanyName", source = "cateringCompany.name")
     @Mapping(target = "photoUrls", source = "photoUrls")
-    GetMealDTO mapToGetMealDTO(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
+    GetMealDTO mapToGetMealDTO(Meal meal);
 
     default List<String> mapPhotoUrlsToStrings(List<PhotoUrl> photoUrls) {
         if (photoUrls == null) {
@@ -30,18 +31,18 @@ public interface MealMapper {
 
     @Mapping(target = "id", source="id")
     @Mapping(target = "available", constant = "true")
-    MealDb mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
+    MealDb mapToDb(Meal meal);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cateringCompany", ignore = true)
-    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(AddMealDTO addMealDTO);
+    Meal mapToDomain(AddMealDTO addMealDTO);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "price", source = "price")
     @Mapping(target = "photoUrls", source = "photoUrls")
     @Mapping(target = "cateringCompany", source = "cateringCompany")
-    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(MealDb dbMeal);
+    Meal mapToDomain(MealDb dbMeal);
 
     default List<PhotoUrl> mapPhotoUrls(List<String> urls) {
         if (urls == null) {

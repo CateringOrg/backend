@@ -11,6 +11,7 @@ import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartMealDTO;
 import pl.edu.pw.ee.catering_backend.cart.domain.Cart;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
+import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface CartMapper {
@@ -25,7 +26,7 @@ public interface CartMapper {
     @Mapping(target = "price", source = "price")
     @Mapping(target = "cateringCompanyName", source = "cateringCompany.name")
     @Mapping(target = "photoUrls", source = "photoUrls")
-    GetCartMealDTO mealToGetCartMealDTO(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
+    GetCartMealDTO mealToGetCartMealDTO(Meal meal);
 
     default List<String> mapPhotoUrlsToStrings(List<PhotoUrl> photoUrls) {
         if (photoUrls == null) {

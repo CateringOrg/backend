@@ -1,19 +1,24 @@
 package pl.edu.pw.ee.catering_backend.configuration;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Wallet;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserRepository;
+import pl.edu.pw.ee.catering_backend.user.domain.AppRole;
+import pl.edu.pw.ee.catering_backend.user.domain.User;
+import pl.edu.pw.ee.catering_backend.user.domain.UserPersistenceService;
 
 @Slf4j
 @Component
@@ -22,13 +27,21 @@ public class InitialStatePreparationConfig {
 
     private final ICateringCompanyPersistenceService cateringCompanyPersistenceService;
     private final CateringCompanyRepository cateringCompanyRepository;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
     private final MealRepository mealRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserPersistenceService userPersistenceService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initialize() {
         try {
             log.info("Running initialization...");
+
+            List.of("ADMIN", "CATERING", "CLIENT").forEach(role -> {
+                User user = User.builder().login(role.toLowerCase() + "user")
+                    .hash(passwordEncoder.encode("1234")).role(AppRole.valueOf(role)).build();
+                userPersistenceService.save(user);
+            });
 
             cateringCompanyRepository.saveManually(
                     UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94"),
@@ -44,7 +57,9 @@ public class InitialStatePreparationConfig {
             Wallet wallet = new Wallet();
             wallet.setAmountOfMoney(new BigDecimal("100.00"));
             client.setWallet(wallet);
-            clientRepository.save(client);
+            client.setRole(AppRole.CLIENT);
+            userRepository.save(client);
+
             log.info("Client initialized!");
 
             MealDb meal = new MealDb();
@@ -61,5 +76,6 @@ public class InitialStatePreparationConfig {
         } catch (Exception e) {
             log.warn("Exception thrown during initialization!", e);
         }
+
     }
 }

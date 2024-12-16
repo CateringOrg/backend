@@ -3,17 +3,22 @@ package pl.edu.pw.ee.catering_backend.offers.application;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.ee.catering_backend.offers.comms.ICateringCompanyOffersData;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
 import pl.edu.pw.ee.catering_backend.offers.domain.ICateringCompanyMealsService;
 import pl.edu.pw.ee.catering_backend.offers.domain.IClientOffersService;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/offers")
@@ -31,6 +36,7 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
         @ApiResponse(responseCode = "400", description = "Invalid meal data; violations in data provided"),
         @ApiResponse(responseCode = "404", description = "Catering company not found")
   })
+  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CATERING')")
   public ResponseEntity<Void> addMeal(@PathVariable UUID cateringCompanyId, @RequestBody AddMealDTO addMealDTO) {
     cateringCompanyMealsService.addMeal(cateringCompanyId, addMealDTO);
     return ResponseEntity.noContent().build();
