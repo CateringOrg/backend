@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
+import pl.edu.pw.ee.catering_backend.cart.domain.Cart;
 import pl.edu.pw.ee.catering_backend.cart.domain.ICartPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
@@ -17,7 +18,6 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CartRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
-import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +27,14 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
     private final CartRepository cartRepository;
     private final MealRepository mealRepository;
     private final CartMapper cartMapper;
-    private final MealMapper mealMapper;
     private final ClientRepository clientRepository;
 
     @Override
-    public pl.edu.pw.ee.catering_backend.cart.domain.Cart save(pl.edu.pw.ee.catering_backend.cart.domain.Cart cart) {
+    public Cart save(Cart cart) {
 
         CartDb dbCart = cartMapper.mapToDb(cart);
         ClientDb client = clientRepository.findByLogin(cart.getClientLogin())
-            .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
+                .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
 
         dbCart.setClient(client);
 
@@ -60,9 +59,8 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
         return cartMapper.mapToDomain(savedDbCart);
     }
 
-
     @Override
-    public Optional<pl.edu.pw.ee.catering_backend.cart.domain.Cart> get(UUID cartId) {
+    public Optional<Cart> get(UUID cartId) {
         return cartRepository.findById(cartId)
                 .map(cartMapper::mapToDomain)
                 .or(() -> {
@@ -70,9 +68,8 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
                 });
     }
 
-
     @Override
-    public Optional<pl.edu.pw.ee.catering_backend.cart.domain.Cart> getByClientLogin(String clientLogin) {
+    public Optional<Cart> getByClientLogin(String clientLogin) {
         return cartRepository.findByClient_Login(clientLogin)
                 .map(cartMapper::mapToDomain);
     }
