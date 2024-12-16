@@ -12,4 +12,6 @@ public interface IMealsPersistenceService {
   List<pl.edu.pw.ee.catering_backend.offers.domain.Meal> getMeals();
 
   pl.edu.pw.ee.catering_backend.offers.domain.Meal getById(UUID id);
+
+  List<Meal> getMealsByCompany(UUID cateringCompanyId);
 }

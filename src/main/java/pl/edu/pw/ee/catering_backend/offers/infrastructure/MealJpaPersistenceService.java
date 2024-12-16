@@ -45,4 +45,11 @@ public class MealJpaPersistenceService implements IMealsPersistenceService {
             .map(mealMapper::mapToDomain)
             .orElseThrow(() -> new NoSuchElementException("Meal with ID " + id + " not found"));
   }
+
+  @Override
+  public List<pl.edu.pw.ee.catering_backend.offers.domain.Meal> getMealsByCompany(UUID cateringCompanyId) {
+    return mealRepository.findByCateringCompany_Id(cateringCompanyId).stream()
+            .map(mealMapper::mapToDomain)
+            .collect(java.util.stream.Collectors.toList());
+  }
 }

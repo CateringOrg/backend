@@ -37,7 +37,7 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
   }
 
   @Override
-  @PostMapping("/search/meals")
+  @GetMapping("/search/meals")
   @Operation(summary = "Get current meals offer")
   @ApiResponses({
           @ApiResponse(responseCode = "200", description = "Meals requested successfully"),
@@ -47,4 +47,16 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
     List<GetMealDTO> meals = clientOffersService.getMeals();
     return ResponseEntity.ok(meals).getBody();
   }
+
+    @Override
+    @GetMapping("/{cateringCompanyId}/meals")
+    @Operation(summary = "Get meals offer of a catering company")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Meals requested successfully"),
+            @ApiResponse(responseCode = "404", description = "Could not find any meals")
+    })
+    public List<GetMealDTO> getMealsByCompany(@PathVariable UUID cateringCompanyId) {
+      List<GetMealDTO> meals = cateringCompanyMealsService.getMealsByCompany(cateringCompanyId);
+      return ResponseEntity.ok(meals).getBody();
+    }
 }
