@@ -5,10 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.edu.pw.ee.catering_backend.configuration.jwtUtils.JwtAuthFilter;
-import pl.edu.pw.ee.catering_backend.user.domain.UserPersistenceService;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -61,19 +56,19 @@ public class SecurityConfiguration {
     return http.build();
   }
 
-  @Bean
-  public AuthenticationProvider authenticationProvider(
-      UserPersistenceService userPersistenceService) {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(
-        userPersistenceService::getByLogin);
-    authProvider.setPasswordEncoder(passwordEncoder);
-    return authProvider;
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-      throws Exception {
-    return configuration.getAuthenticationManager();
-  }
+//  @Bean
+//  public AuthenticationProvider authenticationProvider(
+//      UserPersistenceService userPersistenceService) {
+//    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//    authProvider.setUserDetailsService(
+//        userPersistenceService::getByLogin);
+//    authProvider.setPasswordEncoder(passwordEncoder);
+//    return authProvider;
+//  }
+//
+//  @Bean
+//  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+//      throws Exception {
+//    return configuration.getAuthenticationManager();
+//  }
 }
