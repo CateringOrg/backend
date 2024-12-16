@@ -1,5 +1,6 @@
 package pl.edu.pw.ee.catering_backend.infrastructure.db;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,9 +21,10 @@ public class PhotoUrl {
   private UUID id;
 
   @NotBlank
+  @Column(length = 4096)
   private String url;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "meal_id")
-  private Meal meal;
+  private MealDb meal;
 }

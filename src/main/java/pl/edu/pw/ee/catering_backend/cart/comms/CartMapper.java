@@ -9,6 +9,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartDTO;
 import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartMealDTO;
 import pl.edu.pw.ee.catering_backend.cart.domain.Cart;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 
 @Mapper(componentModel = ComponentModel.SPRING)
@@ -38,10 +39,10 @@ public interface CartMapper {
     @Mapping(target = "id", source="id")
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "meals", source = "meals")
-    pl.edu.pw.ee.catering_backend.infrastructure.db.Cart mapToDb(Cart cart);
+    CartDb mapToDb(Cart cart);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "clientLogin", source = "client.login")
     @Mapping(target = "meals", source = "meals")
-    Cart mapToDomain(pl.edu.pw.ee.catering_backend.infrastructure.db.Cart dbCart);
+    Cart mapToDomain(CartDb dbCart);
 }

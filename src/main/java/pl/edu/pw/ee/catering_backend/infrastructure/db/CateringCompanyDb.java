@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Entity(name = "catering_companies")
 @Data
-public class CateringCompany {
+public class CateringCompanyDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,5 +22,5 @@ public class CateringCompany {
   private String nip;
 
   @OneToMany(mappedBy = "cateringCompany")
-  private List<Meal> meals;
+  private List<MealDb> meals;
 }

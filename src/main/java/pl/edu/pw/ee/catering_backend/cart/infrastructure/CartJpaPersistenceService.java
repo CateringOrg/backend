@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.domain.ICartPersistenceService;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Cart;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Client;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CartRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
@@ -32,13 +33,13 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
     @Override
     public pl.edu.pw.ee.catering_backend.cart.domain.Cart save(pl.edu.pw.ee.catering_backend.cart.domain.Cart cart) {
 
-        pl.edu.pw.ee.catering_backend.infrastructure.db.Cart dbCart = cartMapper.mapToDb(cart);
-        Client client = clientRepository.findByLogin(cart.getClientLogin())
+        CartDb dbCart = cartMapper.mapToDb(cart);
+        ClientDb client = clientRepository.findByLogin(cart.getClientLogin())
             .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
 
         dbCart.setClient(client);
 
-        List<pl.edu.pw.ee.catering_backend.infrastructure.db.Meal> managedMeals = cart.getMeals().stream()
+        List<MealDb> managedMeals = cart.getMeals().stream()
                 .map(domainMeal -> mealRepository.findById(domainMeal.getId())
                         .orElseThrow(() -> new NoSuchElementException("Meal not found with ID: " + domainMeal.getId())))
                 .collect(Collectors.toList());
@@ -49,12 +50,12 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
             if (meal.getCarts() == null) {
                 meal.setCarts(new ArrayList<>());
             }
-            if (meal.getCarts().stream().map(Cart::getId).noneMatch(cartId -> dbCart.getId().equals(cartId))) {
+            if (meal.getCarts().stream().map(CartDb::getId).noneMatch(cartId -> dbCart.getId().equals(cartId))) {
                 meal.getCarts().add(dbCart);
             }
         });
 
-        pl.edu.pw.ee.catering_backend.infrastructure.db.Cart savedDbCart = cartRepository.save(dbCart);
+        CartDb savedDbCart = cartRepository.save(dbCart);
 
         return cartMapper.mapToDomain(savedDbCart);
     }

@@ -2,9 +2,9 @@ package pl.edu.pw.ee.catering_backend.orders.data
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Client
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Order
+import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb
+import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb
+import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderRepository
 import java.util.*
@@ -25,11 +25,11 @@ interface OrdersService {
 
     fun getAllOrders(
         clientLogin: String,
-    ): Result<List<Order>>
+    ): Result<List<OrderDb>>
 
     fun createOrder(
-        client: Client? = null,
-        mealsIds: List<Meal>,
+        client: ClientDb? = null,
+        mealsIds: List<MealDb>,
         deliveryAddress: String,
         deliveryMethod: String,
         status: String
@@ -42,8 +42,8 @@ class OrdersServiceImpl(
     @Autowired private val mealRepository: MealRepository,
 ) : OrdersService {
     override fun createOrder(
-        client: Client?,
-        mealsIds: List<Meal>,
+        client: ClientDb?,
+        mealsIds: List<MealDb>,
         deliveryAddress: String,
         deliveryMethod: String,
         status: String,
@@ -101,7 +101,7 @@ class OrdersServiceImpl(
         }
     }
 
-    override fun getAllOrders(clientLogin: String): Result<List<Order>> {
+    override fun getAllOrders(clientLogin: String): Result<List<OrderDb>> {
         return try {
             Result.success(ordersRepository.findByClientLogin(clientLogin))
         } catch (e: Exception) {

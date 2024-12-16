@@ -2,7 +2,7 @@ package pl.edu.pw.ee.catering_backend.offers.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
 import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
@@ -21,7 +21,7 @@ public class MealJpaPersistenceService implements IMealsPersistenceService {
   @Override
   public pl.edu.pw.ee.catering_backend.offers.domain.Meal save(
           pl.edu.pw.ee.catering_backend.offers.domain.Meal meal) {
-    Meal mealDb = mealMapper.mapToDb(meal);
+    MealDb mealDb = mealMapper.mapToDb(meal);
 
     if (mealDb.getPhotoUrls() != null) {
       mealDb.getPhotoUrls().forEach(photoUrl -> photoUrl.setMeal(mealDb));

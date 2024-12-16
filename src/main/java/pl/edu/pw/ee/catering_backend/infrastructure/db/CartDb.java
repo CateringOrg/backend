@@ -15,16 +15,16 @@ import lombok.ToString;
 @Entity(name = "carts")
 @Data
 @ToString(exclude = {"meals", "client"})
-public class Cart {
+public class CartDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
   @ManyToMany(mappedBy = "carts")
-  private List<Meal> meals;
+  private List<MealDb> meals;
 
   @OneToOne(optional = true)
   @JoinColumn(name = "client_login")
-  private Client client;
+  private ClientDb client;
 }

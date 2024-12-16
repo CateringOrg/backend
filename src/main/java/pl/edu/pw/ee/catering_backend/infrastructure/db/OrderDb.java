@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Entity(name = "orders")
 @Data
-public class Order {
+public class OrderDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,12 +26,12 @@ public class Order {
   private String status;
 
   @ManyToMany(mappedBy = "orders")
-  private List<Meal> meals;
+  private List<MealDb> meals;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private Client client;
+  private ClientDb client;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
-  private List<Complaint> complaint;
+  private List<ComplaintDb> complaint;
 }

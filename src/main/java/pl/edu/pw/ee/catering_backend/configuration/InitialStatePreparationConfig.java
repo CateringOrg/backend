@@ -8,8 +8,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Client;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Wallet;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
@@ -38,7 +38,7 @@ public class InitialStatePreparationConfig {
             );
             log.info("Catering company initialized!");
 
-            Client client = new Client();
+            ClientDb client = new ClientDb();
             client.setLogin("user1");
             client.setHash("some-random-hash-value");
             Wallet wallet = new Wallet();
@@ -47,7 +47,7 @@ public class InitialStatePreparationConfig {
             clientRepository.save(client);
             log.info("Client initialized!");
 
-            Meal meal = new Meal();
+            MealDb meal = new MealDb();
             meal.setId(UUID.fromString("ed5c57b7-890e-4102-a8ff-b264fa29f02b"));
             meal.setDescription("meal1");
             meal.setPrice(BigDecimal.ZERO);

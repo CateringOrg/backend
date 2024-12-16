@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import pl.edu.pw.ee.catering_backend.catering_company.comms.CateringCompanyMapper;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Meal;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.PhotoUrl;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
@@ -30,7 +30,7 @@ public interface MealMapper {
 
     @Mapping(target = "id", source="id")
     @Mapping(target = "available", constant = "true")
-    Meal mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
+    MealDb mapToDb(pl.edu.pw.ee.catering_backend.offers.domain.Meal meal);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cateringCompany", ignore = true)
@@ -41,7 +41,7 @@ public interface MealMapper {
     @Mapping(target = "price", source = "price")
     @Mapping(target = "photoUrls", source = "photoUrls")
     @Mapping(target = "cateringCompany", source = "cateringCompany")
-    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(Meal dbMeal);
+    pl.edu.pw.ee.catering_backend.offers.domain.Meal mapToDomain(MealDb dbMeal);
 
     default List<PhotoUrl> mapPhotoUrls(List<String> urls) {
         if (urls == null) {

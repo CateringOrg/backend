@@ -13,7 +13,7 @@ import lombok.ToString;
 @Entity(name = "clients")
 @Data
 @ToString(exclude = {"cart", "reviews", "complaints", "orders"})
-public class Client {
+public class ClientDb {
 
   @Id
   @Column(unique = true)
@@ -25,14 +25,14 @@ public class Client {
   private Wallet wallet;
 
   @OneToOne(optional = true, mappedBy = "client")
-  private Cart cart;
+  private CartDb cart;
 
   @OneToMany(mappedBy = "client")
-  private List<Review> reviews;
+  private List<ReviewDb> reviews;
 
   @OneToMany(mappedBy = "client")
-  private List<Complaint> complaints;
+  private List<ComplaintDb> complaints;
 
   @OneToMany(mappedBy = "client")
-  private List<Order> orders;
+  private List<OrderDb> orders;
 }

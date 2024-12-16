@@ -19,7 +19,7 @@ import lombok.ToString;
 @Entity(name = "meals")
 @Data
 @ToString(exclude = {"photoUrls", "carts", "orders", "cateringCompany", "reviews"})
-public class Meal {
+public class MealDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -39,19 +39,19 @@ public class Meal {
       joinColumns = @JoinColumn(name = "meal_id"),
       inverseJoinColumns = @JoinColumn(name = "cart_id")
   )
-  private List<Cart> carts;
+  private List<CartDb> carts;
 
   @ManyToMany
   @JoinTable(name = "meal_orders",
       joinColumns = @JoinColumn(name = "meal_id"),
       inverseJoinColumns = @JoinColumn(name = "order_id")
   )
-  private List<Order> orders;
+  private List<OrderDb> orders;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "catering_company_id")
-  private CateringCompany cateringCompany;
+  private CateringCompanyDb cateringCompany;
 
   @OneToMany(mappedBy = "meal")
-  private List<Review> reviews;
+  private List<ReviewDb> reviews;
 }

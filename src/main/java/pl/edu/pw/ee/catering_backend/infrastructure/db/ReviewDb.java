@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Entity(name = "reviews")
 @Data
-public class Review {
+public class ReviewDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,9 +22,9 @@ public class Review {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "meal_id")
-  private Meal meal;
+  private MealDb meal;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private Client client;
+  private ClientDb client;
 }

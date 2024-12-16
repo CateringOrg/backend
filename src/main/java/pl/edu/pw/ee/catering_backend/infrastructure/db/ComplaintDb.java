@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Entity(name = "complaints")
 @Data
-public class Complaint {
+public class ComplaintDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +22,9 @@ public class Complaint {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private Client client;
+  private ClientDb client;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "order_id")
-  private Order order;
+  private OrderDb order;
 }
