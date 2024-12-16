@@ -8,8 +8,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Wallet;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
@@ -38,7 +38,7 @@ public class InitialStatePreparationConfig {
             );
             log.info("Catering company initialized!");
 
-            ClientDb client = new ClientDb();
+            UserDb client = new UserDb();
             client.setLogin("user1");
             client.setHash("some-random-hash-value");
             Wallet wallet = new Wallet();

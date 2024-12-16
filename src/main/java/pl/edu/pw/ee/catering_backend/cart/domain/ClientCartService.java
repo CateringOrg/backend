@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.comms.dtos.GetCartDTO;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.offers.domain.IMealsPersistenceService;
 import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
@@ -23,7 +23,7 @@ class ClientCartService implements IClientCartService {
     @Override
     public void addMealToCart(String clientLogin, UUID mealId) {
 
-        ClientDb client = clientRepository.findByLogin(clientLogin)
+      UserDb client = clientRepository.findByLogin(clientLogin)
                 .orElseThrow(() -> new NoSuchElementException("Client with login " + clientLogin + " not found"));
 
         Cart cart = cartPersistenceService.getByClientLogin(clientLogin)

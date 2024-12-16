@@ -3,6 +3,8 @@ package pl.edu.pw.ee.catering_backend.infrastructure.db;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -10,10 +12,10 @@ import java.util.List;
 import lombok.Data;
 import lombok.ToString;
 
-@Entity(name = "clients")
+@Entity(name = "users")
 @Data
 @ToString(exclude = {"cart", "reviews", "complaints", "orders"})
-public class ClientDb {
+public class UserDb {
 
   @Id
   @Column(unique = true)
@@ -35,4 +37,7 @@ public class ClientDb {
 
   @OneToMany(mappedBy = "client")
   private List<OrderDb> orders;
+
+  @Enumerated(EnumType.STRING)
+  private AppRole role;
 }

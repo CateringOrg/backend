@@ -30,7 +30,7 @@ public class OrderDb {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_login")
-  private ClientDb client;
+  private UserDb client;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
   private List<ComplaintDb> complaint;

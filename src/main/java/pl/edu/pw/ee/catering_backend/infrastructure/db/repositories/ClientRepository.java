@@ -1,10 +1,10 @@
 package pl.edu.pw.ee.catering_backend.infrastructure.db.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
-
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 
-public interface ClientRepository extends JpaRepository<ClientDb, String> {
-    Optional<ClientDb> findByLogin(String login);
+public interface ClientRepository extends JpaRepository<UserDb, String> {
+
+    Optional<UserDb> findByLogin(String login);
 }

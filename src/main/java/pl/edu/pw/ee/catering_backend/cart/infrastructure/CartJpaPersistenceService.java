@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.ee.catering_backend.cart.comms.CartMapper;
 import pl.edu.pw.ee.catering_backend.cart.domain.ICartPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.CartDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CartRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.ClientRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
@@ -34,7 +34,7 @@ public class CartJpaPersistenceService implements ICartPersistenceService {
     public pl.edu.pw.ee.catering_backend.cart.domain.Cart save(pl.edu.pw.ee.catering_backend.cart.domain.Cart cart) {
 
         CartDb dbCart = cartMapper.mapToDb(cart);
-        ClientDb client = clientRepository.findByLogin(cart.getClientLogin())
+        UserDb client = clientRepository.findByLogin(cart.getClientLogin())
             .orElseThrow(() -> new NoSuchElementException("Client not found with login: " + cart.getClientLogin()));
 
         dbCart.setClient(client);

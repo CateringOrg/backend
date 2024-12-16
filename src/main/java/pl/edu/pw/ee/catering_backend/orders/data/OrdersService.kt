@@ -2,9 +2,9 @@ package pl.edu.pw.ee.catering_backend.orders.data
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import pl.edu.pw.ee.catering_backend.infrastructure.db.ClientDb
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb
 import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb
+import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderRepository
 import java.util.*
@@ -28,7 +28,7 @@ interface OrdersService {
     ): Result<List<OrderDb>>
 
     fun createOrder(
-        client: ClientDb? = null,
+        client: UserDb? = null,
         mealsIds: List<MealDb>,
         deliveryAddress: String,
         deliveryMethod: String,
@@ -42,7 +42,7 @@ class OrdersServiceImpl(
     @Autowired private val mealRepository: MealRepository,
 ) : OrdersService {
     override fun createOrder(
-        client: ClientDb?,
+        client: UserDb?,
         mealsIds: List<MealDb>,
         deliveryAddress: String,
         deliveryMethod: String,
