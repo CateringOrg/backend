@@ -3,10 +3,7 @@ package pl.edu.pw.ee.catering_backend.authentication.application;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.ee.catering_backend.authentication.application.services.AppAuthService;
 import pl.edu.pw.ee.catering_backend.authentication.comms.IAuthorizationData;
 import pl.edu.pw.ee.catering_backend.authentication.comms.dtos.JwtTokenDto;
@@ -25,7 +22,7 @@ public class AuthorizationController implements IAuthorizationData {
   @Operation(summary = "Login")
   @PostMapping("/login")
   @Override
-  public JwtTokenDto login(LoginRequestDto loginRequestDto) {
+  public JwtTokenDto login(@RequestBody LoginRequestDto loginRequestDto) {
     return appAuthService.login(loginRequestDto.getLogin(), loginRequestDto.getPassword());
   }
 
@@ -33,7 +30,7 @@ public class AuthorizationController implements IAuthorizationData {
   @PostMapping("/register")
   @Override
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void register(RegisterRequestDto registerRequestDto) {
+  public void register(@RequestBody RegisterRequestDto registerRequestDto) {
     userService.register(registerRequestDto.getLogin(), registerRequestDto.getPassword());
   }
 
