@@ -58,9 +58,9 @@ public class InitialStatePreparationConfig {
             wallet.setAmountOfMoney(new BigDecimal("100.00"));
             client.setWallet(wallet);
             client.setRole(AppRole.CLIENT);
-            userRepository.save(client);
+            UserDb createdUser = userRepository.save(client);
 
-            log.info("Client initialized!");
+            log.info("Client initialized {}!", createdUser.getLogin());
 
             MealDb meal = new MealDb();
             meal.setId(UUID.fromString("ed5c57b7-890e-4102-a8ff-b264fa29f02b"));

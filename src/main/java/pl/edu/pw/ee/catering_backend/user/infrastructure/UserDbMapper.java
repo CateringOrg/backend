@@ -6,8 +6,7 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.user.domain.User;
 
 @Mapper(componentModel = "spring")
-interface UserDbMapper {
-
+public interface UserDbMapper {
 
   User toDomain(UserDb userDb);
 
