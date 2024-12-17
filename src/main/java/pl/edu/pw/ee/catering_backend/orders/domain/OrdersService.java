@@ -48,7 +48,7 @@ public class OrdersService implements IOrdersService {
         order.setMeals(mappedMeals);
         order.setOrderCreationTime(orderCreationTime);
         order.setClient(userDbMapper.toDomain(userDb));
-        order.setStatus(OrderStatus.Not_Paid);
+        order.setStatus(OrderStatus.UNPAID);
 
         order.validateForUpdate();
 

@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "cron.expression",
+      "type": "java.lang.String",
+      "description": "The cron expression for the scheduled task.",
+    }
+  ]
+}
