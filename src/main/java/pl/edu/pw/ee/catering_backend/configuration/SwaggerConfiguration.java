@@ -18,11 +18,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SecurityScheme(
-    scheme = "bearer",
-    name = "Authorization",
-    in = SecuritySchemeIn.HEADER,
-    bearerFormat = "JWT",
-    type = SecuritySchemeType.HTTP
+        scheme = "bearer",
+        name = "Authorization",
+        in = SecuritySchemeIn.HEADER,
+        bearerFormat = "JWT",
+        type = SecuritySchemeType.HTTP
 )
 @RequiredArgsConstructor
 @Slf4j
@@ -74,5 +74,14 @@ public class SwaggerConfiguration {
         .displayName("auth")
         .pathsToMatch("/auth/**")
         .build();
+  }
+
+  @Bean
+  public GroupedOpenApi orderApi() {
+    return GroupedOpenApi.builder()
+            .group("order")
+            .displayName("Order")
+            .pathsToMatch("/orders/**")
+            .build();
   }
 }

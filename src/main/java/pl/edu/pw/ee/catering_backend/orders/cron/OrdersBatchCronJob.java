@@ -55,9 +55,7 @@ public class OrdersBatchCronJob extends BaseCronJob {
                 .map(Map.Entry::getValue)
                 .toList();
 
-        failedPayloads.forEach(payload -> {
-            logger.error("Failed to send order dispatch payload: {}", payload);
-        });
+        failedPayloads.forEach(payload -> logger.error("Failed to send order dispatch payload: {}", payload));
 
         List<Order> successfulPayloads = batchResults.entrySet().stream()
                 .filter(Map.Entry::getKey)

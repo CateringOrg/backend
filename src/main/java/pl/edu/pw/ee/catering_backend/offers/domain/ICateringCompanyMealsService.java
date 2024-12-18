@@ -9,5 +9,7 @@ import java.util.UUID;
 public interface ICateringCompanyMealsService {
   Meal addMeal(UUID cateringCompanyId, AddMealDTO addMealDTO);
 
+  boolean updateMeal(UUID cateringCompanyId, UUID mealId, AddMealDTO addMealDTO);
+
   List<GetMealDTO> getMealsByCompany(UUID cateringCompanyId);
 }

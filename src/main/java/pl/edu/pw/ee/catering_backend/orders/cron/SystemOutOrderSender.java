@@ -1,6 +1,5 @@
 package pl.edu.pw.ee.catering_backend.orders.cron;
 
-import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

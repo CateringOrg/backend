@@ -5,10 +5,11 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealDTO;
+import pl.edu.pw.ee.catering_backend.offers.comms.dtos.AddMealWithPhotosDTO;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
 
 public interface ICateringCompanyOffersData {
-  ResponseEntity<Void> addMeal(UUID cateringCompanyId, AddMealDTO addMealDTO);
+  ResponseEntity<Void> addMeal(UUID cateringCompanyId, AddMealWithPhotosDTO addMealWithPhotosDTO);
+  ResponseEntity<Void> updateMeal(UUID cateringCompanyId, UUID mealId, AddMealWithPhotosDTO addMealWithPhotosDTO);
   List<GetMealDTO> getMealsByCompany(@PathVariable UUID cateringCompanyId);
 }
