@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
 
 @Entity(name = "orders")
@@ -24,6 +26,7 @@ public class OrderDb {
   private OrderStatus status;
 
   @ManyToMany(mappedBy = "orders")
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<MealDb> meals;
 
   @ManyToOne(optional = false)
@@ -31,5 +34,6 @@ public class OrderDb {
   private UserDb client;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<ComplaintDb> complaint;
 }

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity(name = "meals")
 @Data
@@ -32,6 +34,7 @@ public class MealDb {
   private String description;
 
   @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<PhotoUrl> photoUrls;
 
   private BigDecimal price;
