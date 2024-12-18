@@ -64,6 +64,43 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
   }
 
   @Override
+  @PutMapping("/{cateringCompanyId}/meals/{mealId}")
+  @Operation(summary = "Update an existing meal in the catering company's offer")
+  @ApiResponses({
+          @ApiResponse(responseCode = "204", description = "Meal updated successfully"),
+          @ApiResponse(responseCode = "400", description = "Invalid meal data; violations in data provided"),
+          @ApiResponse(responseCode = "404", description = "Catering company or meal not found")
+  })
+  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CATERING')")
+  public ResponseEntity<Void> updateMeal(
+          @PathVariable UUID cateringCompanyId,
+          @PathVariable UUID mealId,
+          @ModelAttribute AddMealWithPhotosDTO addMealWithPhotosDTO
+  ) {
+    List<String> photoUrls;
+    if (addMealWithPhotosDTO.getPhotos() != null)
+      photoUrls = photoUploadService.uploadPhotos(addMealWithPhotosDTO.getPhotos());
+    else
+      photoUrls = new ArrayList<>();
+
+    AddMealDTO addMealDTO = new AddMealDTO();
+    addMealDTO.setName(addMealWithPhotosDTO.getName());
+    addMealDTO.setDescription(addMealWithPhotosDTO.getDescription());
+    addMealDTO.setPrice(addMealWithPhotosDTO.getPrice());
+    addMealDTO.setAvailable(addMealWithPhotosDTO.getAvailable());
+    addMealDTO.setPhotoUrls(photoUrls);
+
+    boolean updated = cateringCompanyMealsService.updateMeal(cateringCompanyId, mealId, addMealDTO);
+
+    if (!updated) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.noContent().build();
+  }
+
+
+  @Override
   @GetMapping("/search/meals")
   @Operation(summary = "Get current meals offer")
   @ApiResponses({

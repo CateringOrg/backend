@@ -29,6 +29,36 @@ class CateringCompanyMealsService implements ICateringCompanyMealsService {
     return mealsPersistenceService.save(meal);
   }
 
+  @Override
+  public boolean updateMeal(UUID cateringCompanyId, UUID mealId, AddMealDTO addMealDTO) {
+    var cateringCompany = cateringCompanyPersistenceService.getById(cateringCompanyId);
+    if (cateringCompany == null) {
+      return false;
+    }
+
+    var existingMeal = mealsPersistenceService.getById(mealId);
+    if (existingMeal == null) {
+      return false;
+    }
+
+    if (!existingMeal.getCateringCompany().getId().equals(cateringCompanyId)) {
+      return false;
+    }
+
+    var updateMeal = mealMapper.mapToDomain(addMealDTO);
+
+    existingMeal.setName(updateMeal.getName());
+    existingMeal.setDescription(updateMeal.getDescription());
+    existingMeal.setPrice(updateMeal.getPrice());
+    existingMeal.setPhotoUrls(updateMeal.getPhotoUrls());
+
+    existingMeal.validate();
+
+    mealsPersistenceService.save(existingMeal);
+
+    return true;
+  }
+
   public List<GetMealDTO> getMealsByCompany(UUID cateringCompanyId) {
     return mealsPersistenceService.getMealsByCompany(cateringCompanyId).stream()
             .map(mealMapper::mapToGetMealDTO)

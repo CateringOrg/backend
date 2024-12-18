@@ -21,7 +21,7 @@ public class OffersControllerAdvice {
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<?> handleNoSuchElement(NoSuchElementException e) {
     return ResponseEntity.status(404)
-            .body(Map.of("message", "Nie znaleziono firmy cateringowej", "details", e.getMessage()));
+            .body(Map.of("message", "Nie znaleziono zasobu", "details", e.getMessage()));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
