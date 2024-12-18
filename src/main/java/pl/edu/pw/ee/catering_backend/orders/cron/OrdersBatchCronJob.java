@@ -5,13 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.edu.pw.ee.catering_backend.catering_company.domain.CateringCompany;
 import pl.edu.pw.ee.catering_backend.infrastructure.cron.BaseCronJob;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderRepository;
-import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
-import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 import pl.edu.pw.ee.catering_backend.orders.comms.OrderMapper;
 import pl.edu.pw.ee.catering_backend.orders.domain.Order;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
@@ -20,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Transactional
@@ -31,34 +26,31 @@ public class OrdersBatchCronJob extends BaseCronJob {
     private final OrderMapper orderMapper;
     private final IOrderDispatcher orderDispatcher;
     private final Logger logger = LoggerFactory.getLogger(OrdersBatchCronJob.class);
-    private final MealMapper mealMapper;
 
     public OrdersBatchCronJob(
             @Value("${cron.expression}") String cronExpression,
             OrderRepository orderRepository,
-            OrderMapper orderMapper, IOrderDispatcher orderDispatcher,
-            MealMapper mealMapper) {
+            OrderMapper orderMapper, IOrderDispatcher orderDispatcher) {
         this.cronExpression = cronExpression;
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDispatcher = orderDispatcher;
-        this.mealMapper = mealMapper;
     }
 
     @Override
     public void execute() {
         System.out.println("Executing meals cron job: Aggregating and sending meals...");
 
-        List<OrderDispatchPayload> orders = collectOrdersWithDeadline(2);
+        List<Order> orders = collectOrdersWithDeadline(2);
 
         if (orders.isEmpty()) {
             logger.info("No orders to dispatch");
             return;
         }
 
-        Map<Boolean, OrderDispatchPayload> batchResults = orderDispatcher.sendBatch(orders);
+        Map<Boolean, Order> batchResults = orderDispatcher.sendBatch(orders);
 
-        List<OrderDispatchPayload> failedPayloads = batchResults.entrySet().stream()
+        List<Order> failedPayloads = batchResults.entrySet().stream()
                 .filter(entry -> !entry.getKey())
                 .map(Map.Entry::getValue)
                 .toList();
@@ -67,26 +59,15 @@ public class OrdersBatchCronJob extends BaseCronJob {
             logger.error("Failed to send order dispatch payload: {}", payload);
         });
 
-        List<OrderDispatchPayload> successfulPayloads = batchResults.entrySet().stream()
+        List<Order> successfulPayloads = batchResults.entrySet().stream()
                 .filter(Map.Entry::getKey)
+                .peek(entry -> logger.info("Successfull payload from batchResults: {}", entry.getValue()))
                 .map(Map.Entry::getValue)
                 .toList();
 
-        Map<Order, List<Meal>> groupedOrders = successfulPayloads.stream()
-                .flatMap(payload -> payload.meals().stream()
-                        .flatMap(meal -> findOrdersByMeal(meal).stream()
-                                .map(order -> Map.entry(order, meal))
-                        )
-                )
-                .collect(Collectors.groupingBy(
-                        Map.Entry::getKey,
-                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-                ));
-
-        groupedOrders.forEach((order, meals) -> {
-            order.setStatus(OrderStatus.IN_PREPARATION);
-            orderRepository.save(orderMapper.mapToOrderDb(order));
-            logger.debug("Order {} status changed to IN_PREPARATION", order.getOrderId());
+        successfulPayloads.forEach((order) -> {
+            orderRepository.updateOrderStatus(order.getOrderId(), OrderStatus.IN_PREPARATION);
+            logger.info("Order {} status changed to IN_PREPARATION", order.getOrderId());
         });
 
     }
@@ -99,38 +80,30 @@ public class OrdersBatchCronJob extends BaseCronJob {
         return cronExpression;
     }
 
-    private List<OrderDispatchPayload> collectOrdersWithDeadline(int daysUntilDeadline) {
+    private List<Order> collectOrdersWithDeadline(int daysUntilDeadline) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime deadlineThreshold = today.plusDays(daysUntilDeadline);
+        List<Order> orders = prepareMeals();
 
-        List<Meal> mealsToSend = orderRepository.findAll().stream()
-                .filter(order ->
-                        order.getStatus() == OrderStatus.PAID
-                                && daysBetween(today, order.getDeliveryTime()) <= daysUntilDeadline
-                                && order.getDeliveryTime().isBefore(deadlineThreshold)
-                )
-                .map(orderMapper::mapDbToDomainModel)
-                .map(Order::getMeals)
-                .flatMap(List::stream)
-                .toList();
+        logger.info("Orders to prepare: {}", orders);
+        return orders.stream()
+                .filter(order -> {
+                    // TODO change this status check to PAID after implementing payment
+                    boolean shouldBeSent = daysBetween(today, order.getDeliveryTime()) <= daysUntilDeadline && order.getStatus() == OrderStatus.UNPAID;
 
-        return mealsToSend
-                .stream()
-                .collect(Collectors.groupingBy(Meal::getCateringCompany))
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    CateringCompany cateringCompany = entry.getKey();
-                    List<Meal> meals = entry.getValue();
-                    return new OrderDispatchPayload(cateringCompany, meals);
+                    logger.info("Order {} is within deadline: {}", order.getOrderId(), shouldBeSent);
+                    logger.info("Order day difference: {}", daysBetween(today, order.getDeliveryTime()));
+                    logger.info("Order delivery time: {} deadline threshold: {}", order.getDeliveryTime(), deadlineThreshold);
+
+                    return shouldBeSent;
                 })
                 .toList();
     }
 
-    private List<Order> findOrdersByMeal(Meal meal) {
-        MealDb mealDb = mealMapper.mapToDb(meal);
-        return orderRepository.findAll().stream()
-                .filter(order -> order.getMeals().contains(mealDb))
+    @Transactional
+    public List<Order> prepareMeals() {
+        List<OrderDb> orders = orderRepository.findAllWithMeals();
+        return orders.stream()
                 .map(orderMapper::mapDbToDomainModel)
                 .toList();
     }

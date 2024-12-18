@@ -1,8 +1,10 @@
 package pl.edu.pw.ee.catering_backend.orders.cron;
 
+import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pl.edu.pw.ee.catering_backend.orders.domain.Order;
 
 import java.util.*;
 
@@ -16,10 +18,10 @@ public class SystemOutOrderSender implements IOrderDispatcher {
     }
 
     @Override
-    public Map<Boolean, OrderDispatchPayload> sendBatch(List<OrderDispatchPayload> batchedPayload) {
-        HashMap<Boolean, OrderDispatchPayload> serializationResult = new HashMap<>();
+    public Map<Boolean, Order> sendBatch(List<Order> batch) {
+        HashMap<Boolean, Order> serializationResult = new HashMap<>();
         List<String> payloadsToSend = new ArrayList<>();
-        batchedPayload.forEach(payload -> {
+        batch.forEach(payload -> {
             try {
                 String payloadSerialization = orderDispatchSerializer.serialize(payload);
                 logger.info("Successfully serialized {}", payloadSerialization);
@@ -32,7 +34,7 @@ public class SystemOutOrderSender implements IOrderDispatcher {
         });
 
         payloadsToSend.forEach(serializedPayload ->
-                System.out.println("Sent payload to catering company {}" + serializedPayload)
+                System.out.println("Sent payload to catering company" + serializedPayload)
         );
 
         return serializationResult;

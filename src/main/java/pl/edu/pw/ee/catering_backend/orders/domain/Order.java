@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.ComplaintDb;
+import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
 import pl.edu.pw.ee.catering_backend.user.domain.User;
 
@@ -38,7 +39,7 @@ public class Order {
     @NotNull(groups = UpdateValidation.class)
     private OrderStatus status;
     @NotEmpty(groups = UpdateValidation.class)
-    private List<pl.edu.pw.ee.catering_backend.offers.domain.Meal> meals;
+    private List<Meal> meals;
     @NotNull(groups = UpdateValidation.class)
     private User client;
     // TODO change to complaints from domain
