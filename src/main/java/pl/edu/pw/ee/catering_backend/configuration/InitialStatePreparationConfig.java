@@ -64,8 +64,9 @@ public class InitialStatePreparationConfig {
 
             MealDb meal = new MealDb();
             meal.setId(UUID.fromString("ed5c57b7-890e-4102-a8ff-b264fa29f02b"));
-            meal.setDescription("meal1");
-            meal.setPrice(BigDecimal.ZERO);
+            meal.setName("meal 1");
+            meal.setDescription("meal 1 desc");
+            meal.setPrice(BigDecimal.valueOf(10.00));
             meal.setAvailable(true);
             meal.setCateringCompany(cateringCompanyRepository.findById(
                     UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
