@@ -8,7 +8,7 @@ import pl.edu.pw.ee.catering_backend.orders.domain.Order;
 import java.util.*;
 
 @Service
-public class SystemOutOrderSender implements IOrderDispatcher {
+public class SystemOutOrderSender implements ICateringCompanySystem {
     private final IOrderDispatchSerializer orderDispatchSerializer;
     private final Logger logger = LoggerFactory.getLogger(SystemOutOrderSender.class);
 
@@ -17,7 +17,7 @@ public class SystemOutOrderSender implements IOrderDispatcher {
     }
 
     @Override
-    public Map<Boolean, Order> sendBatch(List<Order> batch) {
+    public Map<Boolean, Order> sendOrders(List<Order> batch) {
         HashMap<Boolean, Order> serializationResult = new HashMap<>();
         List<String> payloadsToSend = new ArrayList<>();
         batch.forEach(payload -> {

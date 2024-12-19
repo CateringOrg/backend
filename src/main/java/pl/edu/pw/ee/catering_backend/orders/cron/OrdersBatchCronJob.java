@@ -24,13 +24,13 @@ public class OrdersBatchCronJob extends BaseCronJob {
     private final String cronExpression;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final IOrderDispatcher orderDispatcher;
+    private final ICateringCompanySystem orderDispatcher;
     private final Logger logger = LoggerFactory.getLogger(OrdersBatchCronJob.class);
 
     public OrdersBatchCronJob(
             @Value("${cron.expression}") String cronExpression,
             OrderRepository orderRepository,
-            OrderMapper orderMapper, IOrderDispatcher orderDispatcher) {
+            OrderMapper orderMapper, ICateringCompanySystem orderDispatcher) {
         this.cronExpression = cronExpression;
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
@@ -48,7 +48,7 @@ public class OrdersBatchCronJob extends BaseCronJob {
             return;
         }
 
-        Map<Boolean, Order> batchResults = orderDispatcher.sendBatch(orders);
+        Map<Boolean, Order> batchResults = orderDispatcher.sendOrders(orders);
 
         List<Order> failedPayloads = batchResults.entrySet().stream()
                 .filter(entry -> !entry.getKey())

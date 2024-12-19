@@ -11,7 +11,7 @@ import pl.edu.pw.ee.catering_backend.orders.domain.Order;
 import java.time.LocalDateTime;
 
 @Service
-public  class OrderDispatchSerializer implements IOrderDispatchSerializer {
+public class OrderDispatchSerializer implements IOrderDispatchSerializer {
 
     final SimpleModule localDateTimeSerialization = new SimpleModule();
     final ObjectMapper objectMapper = new ObjectMapper();
