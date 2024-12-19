@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface ICateringCompanySystem {
-    Map<Boolean, Order> sendOrders(List<Order> batch);
+    Map<Order, Boolean> sendOrders(List<Order> batch);
 }

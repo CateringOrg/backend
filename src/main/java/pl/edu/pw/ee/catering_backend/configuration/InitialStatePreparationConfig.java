@@ -154,6 +154,6 @@ public class InitialStatePreparationConfig {
         );
         paymentService.payForOrder(createPaymentDTO);
 
-        log.info("Test user created with order and payment, credentials: client" + user.getLogin() + " password: 1234, order id: " + randomOrder.getOrderId());
+        log.info("Test user created with order and payment, credentials: " + user.getLogin() + " password: 1234, order id: " + randomOrder.getOrderId());
     }
 }

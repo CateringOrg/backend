@@ -17,17 +17,17 @@ public class SystemOutOrderSender implements ICateringCompanySystem {
     }
 
     @Override
-    public Map<Boolean, Order> sendOrders(List<Order> batch) {
-        HashMap<Boolean, Order> serializationResult = new HashMap<>();
+    public Map<Order, Boolean> sendOrders(List<Order> batch) {
+        HashMap<Order, Boolean> serializationResult = new HashMap<>();
         List<String> payloadsToSend = new ArrayList<>();
         batch.forEach(payload -> {
             try {
                 String payloadSerialization = orderDispatchSerializer.serialize(payload);
                 logger.info("Successfully serialized {}", payloadSerialization);
-                serializationResult.put(true, payload);
+                serializationResult.put(payload, true);
                 payloadsToSend.add(payloadSerialization);
             } catch (Exception e) {
-                serializationResult.put(false, payload);
+                serializationResult.put(payload, false);
                 logger.error("Failed to send order dispatch payload", e);
             }
         });

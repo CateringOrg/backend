@@ -48,19 +48,19 @@ public class OrdersBatchCronJob extends BaseCronJob {
             return;
         }
 
-        Map<Boolean, Order> batchResults = orderDispatcher.sendOrders(orders);
+        Map<Order, Boolean> batchResults = orderDispatcher.sendOrders(orders);
 
         List<Order> failedPayloads = batchResults.entrySet().stream()
-                .filter(entry -> !entry.getKey())
-                .map(Map.Entry::getValue)
+                .filter(entry -> !entry.getValue())
+                .map(Map.Entry::getKey)
                 .toList();
 
         failedPayloads.forEach(payload -> logger.error("Failed to send order dispatch payload: {}", payload));
 
         List<Order> successfulPayloads = batchResults.entrySet().stream()
-                .filter(Map.Entry::getKey)
-                .peek(entry -> logger.info("Successfull payload from batchResults: {}", entry.getValue()))
-                .map(Map.Entry::getValue)
+                .filter(Map.Entry::getValue)
+                .peek(entry -> logger.info("Successfull payload from batchResults: {}", entry.getKey()))
+                .map(Map.Entry::getKey)
                 .toList();
 
         successfulPayloads.forEach((order) -> {
