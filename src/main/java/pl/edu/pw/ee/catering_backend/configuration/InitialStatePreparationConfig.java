@@ -51,18 +51,6 @@ public class InitialStatePreparationConfig {
         try {
             log.info("Running initialization...");
 
-            List.of("ADMIN", "CATERING", "CLIENT").forEach(role -> {
-                Wallet wallet = new Wallet();
-                wallet.setAmountOfMoney(new BigDecimal("100.00"));
-                User user = User.builder()
-                        .login(role.toLowerCase() + "user")
-                        .hash(passwordEncoder.encode("1234"))
-                        .role(AppRole.valueOf(role))
-                        .wallet(wallet)
-                        .build();
-                userPersistenceService.save(user);
-            });
-
             cateringCompanyRepository.saveManually(
                     UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94"),
                     "Testowa firma",
@@ -93,7 +81,11 @@ public class InitialStatePreparationConfig {
             var m = mealRepository.save(meal);
             log.info("Meal initialized {}!", m.getId());
 
-            createTestUser();
+            List.of("ADMIN", "CATERING", "CLIENT").forEach(this::createTestUser);
+
+            List<UserDb> users = userRepository.findAll();
+
+            log.info("Test users initialized, credentials" + users.stream().map(UserDb::getLogin).toList());
             log.info("Initialization done!");
         } catch (Exception e) {
             log.warn("Exception thrown during initialization!", e);
@@ -101,13 +93,15 @@ public class InitialStatePreparationConfig {
 
     }
 
-    private void createTestUser() {
+    private void createTestUser(String role) {
         Wallet wallet = new Wallet();
         wallet.setAmountOfMoney(new BigDecimal("100.00"));
+        AppRole appRole = AppRole.valueOf(role);
+        String login = appRole.toString().toLowerCase() + "_user";
         User user = User.builder()
-                .login("testuser")
+                .login(login)
                 .hash(passwordEncoder.encode("1234"))
-                .role(AppRole.CLIENT)
+                .role(appRole)
                 .wallet(wallet)
                 .build();
         userPersistenceService.save(user);
@@ -160,6 +154,6 @@ public class InitialStatePreparationConfig {
         );
         paymentService.payForOrder(createPaymentDTO);
 
-        log.info("Test user created with order and payment, credentials: client: testuser, password: 1234, one paid order, one unpaid order");
+        log.info("Test user created with order and payment, credentials: client" + user.getLogin() + " password: 1234, order id: " + randomOrder.getOrderId());
     }
 }
