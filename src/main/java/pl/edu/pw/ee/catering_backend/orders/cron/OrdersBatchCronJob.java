@@ -87,7 +87,7 @@ public class OrdersBatchCronJob extends BaseCronJob {
         return orders.stream()
                 .filter(order -> {
                     // TODO change this status check to PAID after implementing payment
-                    boolean shouldBeSent = daysBetween(today, order.getDeliveryTime()) <= daysUntilDeadline && order.getStatus() == OrderStatus.UNPAID;
+                    boolean shouldBeSent = daysBetween(today, order.getDeliveryTime()) <= daysUntilDeadline && order.getStatus() == OrderStatus.PAID;
 
                     logger.info("Order {} is within deadline: {}", order.getOrderId(), shouldBeSent);
                     logger.info("Order day difference: {}", daysBetween(today, order.getDeliveryTime()));

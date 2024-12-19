@@ -13,6 +13,7 @@ import pl.edu.pw.ee.catering_backend.offers.domain.Meal;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
 import pl.edu.pw.ee.catering_backend.user.domain.User;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +43,8 @@ public class Order {
     private List<Meal> meals;
     @NotNull(groups = UpdateValidation.class)
     private User client;
+    @NotNull(groups = UpdateValidation.class)
+    private BigDecimal totalPrice;
     // TODO change to complaints from domain
     private List<ComplaintDb> complaint;
 
