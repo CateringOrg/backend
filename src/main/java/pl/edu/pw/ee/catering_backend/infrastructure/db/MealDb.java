@@ -51,6 +51,7 @@ public class MealDb {
       joinColumns = @JoinColumn(name = "meal_id"),
       inverseJoinColumns = @JoinColumn(name = "order_id")
   )
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<OrderDb> orders;
 
   @ManyToOne(optional = false)

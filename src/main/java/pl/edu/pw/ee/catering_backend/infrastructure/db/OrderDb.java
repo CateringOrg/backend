@@ -2,6 +2,7 @@ package pl.edu.pw.ee.catering_backend.infrastructure.db;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class OrderDb {
   private String deliveryMethod;
   private LocalDateTime deliveryTime;
   private LocalDateTime orderCreationTime;
+  private BigDecimal totalPrice;
   @Enumerated(EnumType.STRING)
   private OrderStatus status;
 

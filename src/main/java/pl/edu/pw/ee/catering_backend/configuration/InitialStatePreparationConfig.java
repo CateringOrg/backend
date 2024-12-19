@@ -1,8 +1,10 @@
 package pl.edu.pw.ee.catering_backend.configuration;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -11,11 +13,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.Wallet;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderRepository;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserRepository;
+import pl.edu.pw.ee.catering_backend.orders.comms.OrderMapper;
+import pl.edu.pw.ee.catering_backend.orders.comms.dtos.AddOrderDTO;
+import pl.edu.pw.ee.catering_backend.orders.domain.Order;
+import pl.edu.pw.ee.catering_backend.orders.domain.OrdersService;
+import pl.edu.pw.ee.catering_backend.payment.comm.CreatePaymentDTO;
+import pl.edu.pw.ee.catering_backend.payment.domain.IPaymentService;
 import pl.edu.pw.ee.catering_backend.user.domain.AppRole;
 import pl.edu.pw.ee.catering_backend.user.domain.User;
 import pl.edu.pw.ee.catering_backend.user.domain.UserPersistenceService;
@@ -31,6 +41,10 @@ public class InitialStatePreparationConfig {
     private final MealRepository mealRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserPersistenceService userPersistenceService;
+    private final OrdersService ordersService;
+    private final IPaymentService paymentService;
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initialize() {
@@ -38,8 +52,14 @@ public class InitialStatePreparationConfig {
             log.info("Running initialization...");
 
             List.of("ADMIN", "CATERING", "CLIENT").forEach(role -> {
-                User user = User.builder().login(role.toLowerCase() + "user")
-                    .hash(passwordEncoder.encode("1234")).role(AppRole.valueOf(role)).build();
+                Wallet wallet = new Wallet();
+                wallet.setAmountOfMoney(new BigDecimal("100.00"));
+                User user = User.builder()
+                        .login(role.toLowerCase() + "user")
+                        .hash(passwordEncoder.encode("1234"))
+                        .role(AppRole.valueOf(role))
+                        .wallet(wallet)
+                        .build();
                 userPersistenceService.save(user);
             });
 
@@ -73,10 +93,73 @@ public class InitialStatePreparationConfig {
             var m = mealRepository.save(meal);
             log.info("Meal initialized {}!", m.getId());
 
+            createTestUser();
             log.info("Initialization done!");
         } catch (Exception e) {
             log.warn("Exception thrown during initialization!", e);
         }
 
+    }
+
+    private void createTestUser() {
+        Wallet wallet = new Wallet();
+        wallet.setAmountOfMoney(new BigDecimal("100.00"));
+        User user = User.builder()
+                .login("testuser")
+                .hash(passwordEncoder.encode("1234"))
+                .role(AppRole.CLIENT)
+                .wallet(wallet)
+                .build();
+        userPersistenceService.save(user);
+
+        MealDb meal = new MealDb();
+        meal.setName("test meal- cheap");
+        meal.setDescription("test meal desc");
+        meal.setPrice(BigDecimal.valueOf(10.00));
+        meal.setAvailable(true);
+        meal.setCateringCompany(cateringCompanyRepository.findById(
+                UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
+
+        mealRepository.save(meal);
+
+        AddOrderDTO firstAddOrderDto = new AddOrderDTO(
+                user.getLogin(),
+                "mock delivery address",
+                "mock delivery method",
+                List.of(meal.getId()),
+                LocalDateTime.now().plusDays(2)
+        );
+        AddOrderDTO secondAddOrderDto = new AddOrderDTO(
+                user.getLogin(),
+                "mock delivery address",
+                "mock delivery method",
+                List.of(meal.getId()),
+                LocalDateTime.now().plusDays(1)
+        );
+        AddOrderDTO thirdAddOrderDto = new AddOrderDTO(
+                user.getLogin(),
+                "mock delivery address",
+                "mock delivery method",
+                List.of(meal.getId()),
+                LocalDateTime.now().plusDays(2)
+        );
+
+        ordersService.addOrder(firstAddOrderDto);
+        ordersService.addOrder(secondAddOrderDto);
+        ordersService.addOrder(thirdAddOrderDto);
+
+        List<OrderDb> addedOrders = orderRepository.findAll().stream().filter(orderDb -> orderDb.getClient().getLogin().equals(user.getLogin())).toList();
+
+        Order randomOrder = addedOrders.stream().map(orderMapper::mapDbToDomainModel).toList().getFirst();
+
+        CreatePaymentDTO createPaymentDTO = new CreatePaymentDTO(
+                randomOrder.getOrderId(),
+                user.getLogin(),
+                "1234",
+                user.getLogin()
+        );
+        paymentService.payForOrder(createPaymentDTO);
+
+        log.info("Test user created with order and payment, credentials: client: testuser, password: 1234, one paid order, one unpaid order");
     }
 }

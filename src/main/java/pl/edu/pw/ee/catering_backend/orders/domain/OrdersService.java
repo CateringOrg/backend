@@ -16,6 +16,7 @@ import pl.edu.pw.ee.catering_backend.orders.comms.dtos.OrderDto;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
 import pl.edu.pw.ee.catering_backend.user.infrastructure.UserDbMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,11 +45,15 @@ public class OrdersService implements IOrdersService {
         UserDb userDb = userRepository.findByLogin(addOrderDTO.getClientLogin()).orElseGet(() -> {
             throw new NoSuchElementException("User with login " + addOrderDTO.getClientLogin() + " not found");
         });
+        BigDecimal totalPrice = mappedMeals.stream()
+                .map(Meal::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setMeals(mappedMeals);
         order.setOrderCreationTime(orderCreationTime);
         order.setClient(userDbMapper.toDomain(userDb));
         order.setStatus(OrderStatus.UNPAID);
+        order.setTotalPrice(totalPrice);
 
         order.validateForUpdate();
 

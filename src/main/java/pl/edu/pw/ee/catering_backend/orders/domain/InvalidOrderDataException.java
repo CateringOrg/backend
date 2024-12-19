@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+@Getter
 public class InvalidOrderDataException extends RuntimeException {
 
-    @Getter
     private final List<String> violations;
 
     public InvalidOrderDataException(String message, List<String> violations) {
