@@ -1,5 +1,6 @@
 package pl.edu.pw.ee.catering_backend.orders.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
@@ -34,20 +35,29 @@ public class OrdersService implements IOrdersService {
     private final OrderMapper orderMapper;
     private final MealMapper mealMapper;
 
+    @Transactional
     @Override
-    public Order addOrder(AddOrderDTO addOrderDTO) {
+    public Order addOrder(
+            String userLogin,
+            AddOrderDTO addOrderDTO
+    ) {
         Order order = orderMapper.mapDtoToDomainModel(addOrderDTO);
         List<MealDb> dbMeals = mealRepository.findAllById(addOrderDTO.getMealIds());
         List<Meal> mappedMeals = dbMeals.stream()
                 .map(mealMapper::mapToDomain)
                 .toList();
         LocalDateTime orderCreationTime = LocalDateTime.now();
-        UserDb userDb = userRepository.findByLogin(addOrderDTO.getClientLogin()).orElseGet(() -> {
-            throw new NoSuchElementException("User with login " + addOrderDTO.getClientLogin() + " not found");
-        });
+        UserDb userDb = userRepository.findByLogin(userLogin).orElseThrow(() -> new NoSuchElementException("User with login " + userLogin + " not found"));
         BigDecimal totalPrice = mappedMeals.stream()
                 .map(Meal::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (mappedMeals.size() != addOrderDTO.getMealIds().size()) {
+            List<UUID> notFoundMealIds = addOrderDTO.getMealIds().stream()
+                    .filter(mealId -> dbMeals.stream().noneMatch(mealDb -> mealDb.getId().equals(mealId)))
+                    .toList();
+            throw new IllegalArgumentException("Some meals were not found in the database: " + notFoundMealIds);
+        }
 
         order.setMeals(mappedMeals);
         order.setOrderCreationTime(orderCreationTime);
@@ -58,27 +68,32 @@ public class OrdersService implements IOrdersService {
         order.validateForUpdate();
 
         Order savedOrder = ordersPersistenceService.save(order, dbMeals);
+
         return savedOrder;
     }
 
     @Override
-    public List<OrderDto> getOrders() {
-        return orderRepository.findAll().stream().map(this::mapAndFillIn).toList();
+    public List<OrderDto> getOrders(String userLogin) {
+        UserDb userDb = userRepository.findByLogin(userLogin).orElseThrow(() -> new NoSuchElementException("User with login " + userLogin + " not found"));
+        List<OrderDb> orders = orderRepository.findAll().stream()
+                .filter(orderDb -> orderDb.getClient().equals(userDb))
+                .toList();
+
+        List<OrderDto> orderDtos = orders.stream()
+                .map(orderMapper::mapDbToDomainModel)
+                .map(orderMapper::mapToOrderDto)
+                .toList();
+
+        return orderDtos;
     }
 
     // TODO fix mapping
     @Override
     public OrderDto getOrderById(UUID id) {
-        return orderRepository.findById(id)
-                .map(this::mapAndFillIn)
-                .orElseThrow(() -> new NoSuchElementException("Order with ID " + id + " not found"));
+        OrderDb orderDb = orderRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Order with id " + id + " not found"));
+        Order order = orderMapper.mapDbToDomainModel(orderDb);
+        return orderMapper.mapToOrderDto(order);
+
     }
 
-    private OrderDto mapAndFillIn(OrderDb orderDb) {
-        var order = orderMapper.mapDbToDomainModel(orderDb);
-        var mealsIds = mealRepository.findAllById(orderDb.getMeals().stream().map(MealDb::getId).toList());
-        var orderDto = orderMapper.mapToOrderDTO(order);
-
-        return orderDto;
-    }
 }

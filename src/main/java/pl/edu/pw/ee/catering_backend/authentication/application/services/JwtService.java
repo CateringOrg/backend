@@ -53,6 +53,7 @@ public class JwtService {
     Date expiration = new Date(System.currentTimeMillis() + accessTokenLifetimeMinutes * 60000L);
     String token = Jwts.builder().setClaims(new HashMap<>() {{
           put("role", user.getRole());
+          put("login", user.getUsername());
         }}).setSubject(user.getLogin())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(expiration)
@@ -60,6 +61,13 @@ public class JwtService {
     return new JwtTokenDto(token);
   }
 
+
+  public String extractLogin(String jwt) {
+    String cleanedToken = jwt.replace("Bearer ", "");
+
+    Claims claims = validateAndExtractAllClaims(cleanedToken);
+    return claims.get("login", String.class);
+  }
 
   private Claims validateAndExtractAllClaims(String token) {
     return Jwts.parser().setSigningKey(signingKey).parseClaimsJws(token).getBody();

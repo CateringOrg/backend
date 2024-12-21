@@ -7,11 +7,11 @@ import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.edu.pw.ee.catering_backend.catering_company.domain.ICateringCompanyPersistenceService;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb;
 import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
@@ -35,7 +35,6 @@ import pl.edu.pw.ee.catering_backend.user.domain.UserPersistenceService;
 @RequiredArgsConstructor
 public class InitialStatePreparationConfig {
 
-    private final ICateringCompanyPersistenceService cateringCompanyPersistenceService;
     private final CateringCompanyRepository cateringCompanyRepository;
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
@@ -85,7 +84,7 @@ public class InitialStatePreparationConfig {
 
             List<UserDb> users = userRepository.findAll();
 
-            log.info("Test users initialized, credentials" + users.stream().map(UserDb::getLogin).toList());
+            log.info("Test users initialized, credentials{}", users.stream().map(UserDb::getLogin).toList());
             log.info("Initialization done!");
         } catch (Exception e) {
             log.warn("Exception thrown during initialization!", e);
@@ -107,40 +106,46 @@ public class InitialStatePreparationConfig {
         userPersistenceService.save(user);
 
         MealDb meal = new MealDb();
-        meal.setName("test meal- cheap");
-        meal.setDescription("test meal desc");
-        meal.setPrice(BigDecimal.valueOf(10.00));
+        meal.setName("Test meal for user " + user.getLogin());
+        meal.setDescription("Test meal description for user " + user.getLogin());
+        meal.setPrice(BigDecimal.valueOf(RandomUtils.nextDouble(10.0, 50.0)));
         meal.setAvailable(true);
         meal.setCateringCompany(cateringCompanyRepository.findById(
                 UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
 
-        mealRepository.save(meal);
+        MealDb savedMeal = mealRepository.save(meal);
 
         AddOrderDTO firstAddOrderDto = new AddOrderDTO(
-                user.getLogin(),
-                "mock delivery address",
-                "mock delivery method",
-                List.of(meal.getId()),
+                "First order delivery address for user " + user.getLogin(),
+                "First order delivery method for user " + user.getLogin(),
+                List.of(savedMeal.getId()),
                 LocalDateTime.now().plusDays(2)
         );
         AddOrderDTO secondAddOrderDto = new AddOrderDTO(
-                user.getLogin(),
-                "mock delivery address",
-                "mock delivery method",
-                List.of(meal.getId()),
+                "Second order delivery address for user " + user.getLogin(),
+                "Second order delivery method for user " + user.getLogin(),
+                List.of(savedMeal.getId()),
                 LocalDateTime.now().plusDays(1)
         );
         AddOrderDTO thirdAddOrderDto = new AddOrderDTO(
-                user.getLogin(),
-                "mock delivery address",
-                "mock delivery method",
-                List.of(meal.getId()),
+                "Third order delivery address for user " + user.getLogin(),
+                "Third order delivery method for user " + user.getLogin(),
+                List.of(savedMeal.getId()),
                 LocalDateTime.now().plusDays(2)
         );
 
-        ordersService.addOrder(firstAddOrderDto);
-        ordersService.addOrder(secondAddOrderDto);
-        ordersService.addOrder(thirdAddOrderDto);
+        ordersService.addOrder(
+                user.getLogin(),
+                firstAddOrderDto
+        );
+        ordersService.addOrder(
+                user.getLogin(),
+                secondAddOrderDto
+        );
+        ordersService.addOrder(
+                user.getLogin(),
+                thirdAddOrderDto
+        );
 
         List<OrderDb> addedOrders = orderRepository.findAll().stream().filter(orderDb -> orderDb.getClient().getLogin().equals(user.getLogin())).toList();
 
@@ -148,12 +153,14 @@ public class InitialStatePreparationConfig {
 
         CreatePaymentDTO createPaymentDTO = new CreatePaymentDTO(
                 randomOrder.getOrderId(),
-                user.getLogin(),
-                "1234",
                 user.getLogin()
         );
-        paymentService.payForOrder(createPaymentDTO);
+        paymentService.payForOrder(
+                createPaymentDTO.orderId(),
+                user.getLogin()
+        );
 
-        log.info("Test user created with order and payment, credentials: " + user.getLogin() + " password: 1234, order id: " + randomOrder.getOrderId());
+        log.info("Test user created with order and payment, credentials: {} password: 1234, order id: {}", user.getLogin(), randomOrder.getOrderId());
     }
+
 }

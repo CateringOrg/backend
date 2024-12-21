@@ -36,9 +36,9 @@ public interface OrderMapper {
     @Mapping(target = "deliveryTime", source = "deliveryTime")
     @Mapping(target = "orderCreationTime", source = "orderCreationTime")
     @Mapping(target = "status", source = "status")
-    @Mapping(target = "clientLogin", source = "client.login")
     @Mapping(target = "meals", source = "meals")
-    OrderDto mapToOrderDTO(Order order);
+    @Mapping(target = "clientLogin", source = "client.login")
+    OrderDto mapToOrderDto(Order order);
 
 //    @Mapping(target = "id", source = "id")
     @Mapping(target = "deliveryAddress", source = "deliveryAddress")

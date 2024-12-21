@@ -10,7 +10,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class AddOrderDTO {
-    String clientLogin;
     String deliveryAddress;
     String deliveryMethod;
     List<UUID> mealIds;

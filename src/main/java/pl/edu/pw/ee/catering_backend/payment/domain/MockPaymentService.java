@@ -8,12 +8,12 @@ import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserReposito
 import pl.edu.pw.ee.catering_backend.orders.comms.OrderMapper;
 import pl.edu.pw.ee.catering_backend.orders.domain.Order;
 import pl.edu.pw.ee.catering_backend.orders.infrastructure.OrderStatus;
-import pl.edu.pw.ee.catering_backend.payment.comm.CreatePaymentDTO;
 import pl.edu.pw.ee.catering_backend.user.domain.User;
-import pl.edu.pw.ee.catering_backend.user.domain.exceptions.InvalidUserCredentialsException;
 import pl.edu.pw.ee.catering_backend.user.infrastructure.UserDbMapper;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class MockPaymentService implements IPaymentService {
@@ -38,46 +38,59 @@ public class MockPaymentService implements IPaymentService {
 
 
     @Override
-    public boolean payForOrder(CreatePaymentDTO createPaymentDTO) {
+    public boolean payForOrder(
+            UUID orderId,
+            String login
+    ) {
         final User user = userRepository
-                .findByLogin(createPaymentDTO.getLogin())
+                .findByLogin(login)
                 .map(userDbMapper::toDomain)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with login: " + createPaymentDTO.getLogin()));
-
-        if (!passwordEncoder.matches(createPaymentDTO.getPassword(), user.getHash())) {
-            throw new InvalidUserCredentialsException("Invalid user credentials for user with login: " + createPaymentDTO.getLogin() + ".");
-        }
+                .orElseThrow(() -> new IllegalArgumentException("User not found with login: " + login));
 
         final BigDecimal userCash = user.getWallet().getAmountOfMoney();
         final Order order = orderRepository
-                .findById(createPaymentDTO.getOrderId())
+                .findById(orderId)
                 .map(orderMapper::mapDbToDomainModel)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + createPaymentDTO.getOrderId()));
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + orderId));
 
-        if (order.getStatus() != OrderStatus.UNPAID) {
-            throw new IllegalArgumentException("Order needs to be in UNPAID status to be paid, order id: " + createPaymentDTO.getOrderId() + ".");
+        if (!Objects.equals(order.getClient().getLogin(), login)) {
+            throw new IllegalArgumentException("User with login: " + login + " is not the owner of the order with id: " + orderId + ".");
         }
 
-        final BigDecimal newCash = getWalletBalanceAfterPayment(createPaymentDTO, order, userCash);
+        if (order.getStatus() != OrderStatus.UNPAID) {
+            throw new IllegalArgumentException("Order needs to be in UNPAID status to be paid, order id: " + orderId + ".");
+        }
+
+        final BigDecimal newCash = getWalletBalanceAfterPayment(
+                orderId,
+                login,
+                order,
+                userCash
+        );
 
         try {
             userRepository.updateWalletAmount(newCash, user.getLogin());
-            orderRepository.updateOrderStatus(createPaymentDTO.getOrderId(), OrderStatus.PAID);
+            orderRepository.updateOrderStatus(orderId, OrderStatus.PAID);
             return true;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error while updating user wallet, user login:" + createPaymentDTO.getLogin() + ", new cash: " + newCash + ".");
+            throw new IllegalArgumentException("Error while updating user wallet, user login:" + login + ", new cash: " + newCash + ".");
         }
     }
 
     @NotNull
-    private static BigDecimal getWalletBalanceAfterPayment(CreatePaymentDTO createPaymentDTO, Order order, BigDecimal userCash) {
+    private static BigDecimal getWalletBalanceAfterPayment(
+            UUID orderId,
+            String login,
+            Order order,
+            BigDecimal userCash
+    ) {
         final BigDecimal orderPrice = order.getTotalPrice();
 
         if (userCash.compareTo(orderPrice) < 0) {
             throw new IllegalArgumentException("User does not have enough money to pay for the order, user login: " +
-                    createPaymentDTO.getLogin() +
+                    login +
                     ", order id: " +
-                    createPaymentDTO.getOrderId() +
+                    orderId +
                     ", user wallet: " +
                     userCash +
                     ", order price: " +

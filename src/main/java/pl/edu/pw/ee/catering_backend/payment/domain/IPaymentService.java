@@ -1,7 +1,10 @@
 package pl.edu.pw.ee.catering_backend.payment.domain;
 
-import pl.edu.pw.ee.catering_backend.payment.comm.CreatePaymentDTO;
+import java.util.UUID;
 
 public interface IPaymentService {
-    boolean payForOrder(CreatePaymentDTO createPaymentDTO);
+    boolean payForOrder(
+            UUID orderId,
+            String login
+    );
 }

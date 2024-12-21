@@ -1,23 +1,26 @@
 package pl.edu.pw.ee.catering_backend.orders.application;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pw.ee.catering_backend.authentication.application.services.JwtService;
 import pl.edu.pw.ee.catering_backend.orders.comms.IManagerOrderingData;
 import pl.edu.pw.ee.catering_backend.orders.comms.dtos.AddOrderDTO;
 import pl.edu.pw.ee.catering_backend.orders.comms.dtos.OrderDto;
 import pl.edu.pw.ee.catering_backend.orders.domain.OrdersService;
 
-import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrdersController implements IManagerOrderingData {
 
+    private final JwtService jwtService;
     private final OrdersService ordersService;
 
     @Override
@@ -30,13 +33,24 @@ public class OrdersController implements IManagerOrderingData {
                     @ApiResponse(responseCode = "409", description = "Order already exists")
             }
     )
-    public ResponseEntity<Void> addOrder(@RequestBody AddOrderDTO dto) {
-        var order = ordersService.addOrder(dto);
-        return ResponseEntity.created(URI.create("/orders/" + order.getOrderId())).build();
+    public ResponseEntity<Map<String, String>> addOrder(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AddOrderDTO dto
+    ) {
+        var login = jwtService.extractLogin(token);
+        var order = ordersService.addOrder(
+                login,
+                dto
+        );
+        JsonMapper jsonMapper = new JsonMapper();
+        Map<String, String> orderMap = Map.of(
+                "orderId", order.getOrderId().toString()
+        );
+        jsonMapper.valueToTree(orderMap);
+        return ResponseEntity.ok().body(orderMap);
     }
 
     @GetMapping
-    @Override
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Orders found"),
@@ -44,8 +58,12 @@ public class OrdersController implements IManagerOrderingData {
                     @ApiResponse(responseCode = "404", description = "Orders not found")
             }
     )
-    public ResponseEntity<List<OrderDto>> getOrders() {
-        var orders = ordersService.getOrders();
+    @Override
+    public ResponseEntity<List<OrderDto>> getOrders(
+            @RequestHeader("Authorization") String token
+    ) {
+        var login = jwtService.extractLogin(token);
+        var orders = ordersService.getOrders(login);
         if (orders.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -62,16 +80,12 @@ public class OrdersController implements IManagerOrderingData {
             }
     )
     public ResponseEntity<OrderDto> getOrderById(@PathVariable String id) {
-        try {
-            var uuid = java.util.UUID.fromString(id);
-            var order = ordersService.getOrderById(uuid);
-            if (order == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+        var uuid = java.util.UUID.fromString(id);
+        var order = ordersService.getOrderById(uuid);
+        if (order == null) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(order);
     }
 }
 
