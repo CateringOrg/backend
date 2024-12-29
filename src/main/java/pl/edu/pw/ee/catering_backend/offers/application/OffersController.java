@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
   private final IPhotoUploadService photoUploadService;
 
   @Override
-  @PostMapping("/{cateringCompanyId}/meals")
+  @PostMapping(value = "/{cateringCompanyId}/meals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Add a new meal to the catering company's offer")
   @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Meal added successfully"),
@@ -64,7 +65,7 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
   }
 
   @Override
-  @PutMapping("/{cateringCompanyId}/meals/{mealId}")
+  @PutMapping(value = "/{cateringCompanyId}/meals/{mealId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Update an existing meal in the catering company's offer")
   @ApiResponses({
           @ApiResponse(responseCode = "204", description = "Meal updated successfully"),
