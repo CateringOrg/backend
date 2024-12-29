@@ -68,14 +68,7 @@ class CateringCompanyMealsService implements ICateringCompanyMealsService {
   }
 
   @Override
-  public GetMealDTO getCompanyMeal(UUID cateringCompanyId, UUID mealId) {
-    var cateringCompany = cateringCompanyPersistenceService.getById(cateringCompanyId);
-    var meal = mealsPersistenceService.getById(mealId);
-
-    if (!meal.getCateringCompany().getId().equals(cateringCompanyId)) {
-      throw new NoSuchElementException("Meal from company not found");
-    }
-
+  public GetMealDTO getMeal(UUID mealId) {
     return mealMapper.mapToGetMealDTO(mealsPersistenceService.getById(mealId));
   }
 }

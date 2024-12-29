@@ -12,5 +12,5 @@ public interface ICateringCompanyOffersData {
   ResponseEntity<Void> addMeal(UUID cateringCompanyId, AddMealWithPhotosDTO addMealWithPhotosDTO);
   ResponseEntity<Void> updateMeal(UUID cateringCompanyId, UUID mealId, AddMealWithPhotosDTO addMealWithPhotosDTO);
   List<GetMealDTO> getMealsByCompany(@PathVariable UUID cateringCompanyId);
-  GetMealDTO getCompanyMeal(UUID cateringCompanyId, UUID mealId);
+  GetMealDTO getMeal(UUID mealId);
 }

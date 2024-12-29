@@ -126,14 +126,14 @@ public class OffersController implements IClientOffersService, ICateringCompanyO
     }
 
     @Override
-    @GetMapping("{cateringCompanyId}/meals/{mealId}")
-    @Operation(summary = "Get specific meal from catering company offer")
+    @GetMapping("meals/{mealId}")
+    @Operation(summary = "Get specific meal by id")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404")
     })
-    public GetMealDTO getCompanyMeal(@PathVariable UUID cateringCompanyId, @PathVariable UUID mealId) {
-      GetMealDTO meal = cateringCompanyMealsService.getCompanyMeal(cateringCompanyId, mealId);
+    public GetMealDTO getMeal(@PathVariable UUID mealId) {
+      GetMealDTO meal = cateringCompanyMealsService.getMeal(mealId);
 
       return ResponseEntity.ok(meal).getBody();
     }

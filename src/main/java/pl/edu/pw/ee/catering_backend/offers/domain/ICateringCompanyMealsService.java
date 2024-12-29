@@ -13,5 +13,5 @@ public interface ICateringCompanyMealsService {
 
   List<GetMealDTO> getMealsByCompany(UUID cateringCompanyId);
 
-  GetMealDTO getCompanyMeal(UUID cateringCompanyId, UUID mealId);
+  GetMealDTO getMeal(UUID mealId);
 }
