@@ -12,4 +12,6 @@ public interface ICateringCompanyMealsService {
   boolean updateMeal(UUID cateringCompanyId, UUID mealId, AddMealDTO addMealDTO);
 
   List<GetMealDTO> getMealsByCompany(UUID cateringCompanyId);
+
+  GetMealDTO getCompanyMeal(UUID cateringCompanyId, UUID mealId);
 }

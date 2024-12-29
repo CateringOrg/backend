@@ -8,6 +8,7 @@ import pl.edu.pw.ee.catering_backend.offers.comms.MealMapper;
 import pl.edu.pw.ee.catering_backend.offers.comms.dtos.GetMealDTO;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -59,9 +60,22 @@ class CateringCompanyMealsService implements ICateringCompanyMealsService {
     return true;
   }
 
+  @Override
   public List<GetMealDTO> getMealsByCompany(UUID cateringCompanyId) {
     return mealsPersistenceService.getMealsByCompany(cateringCompanyId).stream()
             .map(mealMapper::mapToGetMealDTO)
             .collect(java.util.stream.Collectors.toList());
+  }
+
+  @Override
+  public GetMealDTO getCompanyMeal(UUID cateringCompanyId, UUID mealId) {
+    var cateringCompany = cateringCompanyPersistenceService.getById(cateringCompanyId);
+    var meal = mealsPersistenceService.getById(mealId);
+
+    if (!meal.getCateringCompany().getId().equals(cateringCompanyId)) {
+      throw new NoSuchElementException("Meal from company not found");
+    }
+
+    return mealMapper.mapToGetMealDTO(mealsPersistenceService.getById(mealId));
   }
 }
