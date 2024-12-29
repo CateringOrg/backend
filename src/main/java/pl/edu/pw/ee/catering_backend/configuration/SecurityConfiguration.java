@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,7 +24,6 @@ import pl.edu.pw.ee.catering_backend.configuration.jwtUtils.JwtAuthFilter;
 public class SecurityConfiguration {
 
   private final JwtAuthFilter jwtAuthFilter;
-  private final PasswordEncoder passwordEncoder;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,9 +36,7 @@ public class SecurityConfiguration {
 
     http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-    http.exceptionHandling(config -> {
-      config.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-    });
+    http.exceptionHandling(config -> config.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
     http.cors(config -> {
       CorsConfiguration configuration = new CorsConfiguration();

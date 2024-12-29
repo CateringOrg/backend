@@ -3,7 +3,6 @@ package pl.edu.pw.ee.catering_backend.user.domain;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.ee.catering_backend.user.domain.exceptions.UserAlreadyExistsException;
 
@@ -13,7 +12,7 @@ import pl.edu.pw.ee.catering_backend.user.domain.exceptions.UserAlreadyExistsExc
 class UserServiceImpl implements UserService {
 
   private final UserPersistenceService userPersistenceService;
-  private final PasswordEncoder passwordEncoder;
+  private final UserPasswordEncoder passwordEncoder;
 
 
   @Override
@@ -26,6 +25,7 @@ class UserServiceImpl implements UserService {
     }
     var user = User.builder().login(login).hash(passwordEncoder.encode(password))
         .role(AppRole.CLIENT).build();
+        
     return userPersistenceService.save(user);
   }
 
