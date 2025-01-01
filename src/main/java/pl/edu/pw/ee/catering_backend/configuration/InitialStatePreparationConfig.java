@@ -2,7 +2,9 @@ package pl.edu.pw.ee.catering_backend.configuration;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -12,14 +14,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.MealDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.OrderDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.UserDb;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.Wallet;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.CateringCompanyRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.MealRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.OrderRepository;
-import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.UserRepository;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.*;
+import pl.edu.pw.ee.catering_backend.infrastructure.db.repositories.*;
 import pl.edu.pw.ee.catering_backend.orders.comms.OrderMapper;
 import pl.edu.pw.ee.catering_backend.orders.comms.dtos.AddOrderDTO;
 import pl.edu.pw.ee.catering_backend.orders.domain.Order;
@@ -75,13 +71,18 @@ public class InitialStatePreparationConfig {
             meal.setDescription("meal 1 desc");
             meal.setPrice(BigDecimal.valueOf(10.00));
             meal.setAvailable(true);
+            meal.setPhotoUrls(List.of(
+                    new PhotoUrl( "https://a.allegroimg.com/original/12e55e/13fd8e1543269cf3d7ab771bfcaa", meal)
+            ));
             meal.setCateringCompany(cateringCompanyRepository.findById(
                     UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
             var m = mealRepository.save(meal);
             log.info("Meal initialized {}!", m.getId());
 
-            List.of("ADMIN", "CATERING", "CLIENT").forEach(this::createTestUser);
-
+            Map.of("ADMIN", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAM-uuObFYoZgurQT8Vvl3oHXnnWC6EzIKaQ&s",
+                    "CATERING", "https://www.miastokobiet.pl/wp-content/uploads/2018/03/zdrowy-posilek.jpg",
+                    "CLIENT", "https://i0.wp.com/psychiatraplus.pl/wp-content/uploads/2024/07/Smieciowe-jedzenie-a-mozg-scaled.jpg?resize=696%2C464&ssl=1")
+                    .forEach(this::createTestUser);
             List<UserDb> users = userRepository.findAll();
 
             log.info("Test users initialized, credentials{}", users.stream().map(UserDb::getLogin).toList());
@@ -92,7 +93,7 @@ public class InitialStatePreparationConfig {
 
     }
 
-    private void createTestUser(String role) {
+    private void createTestUser(String role, String url) {
         Wallet wallet = new Wallet();
         wallet.setAmountOfMoney(new BigDecimal("100.00"));
         AppRole appRole = AppRole.valueOf(role);
@@ -110,6 +111,9 @@ public class InitialStatePreparationConfig {
         meal.setDescription("Test meal description for user " + user.getLogin());
         meal.setPrice(BigDecimal.valueOf(RandomUtils.nextDouble(10.0, 50.0)));
         meal.setAvailable(true);
+        meal.setPhotoUrls(List.of(
+                new PhotoUrl( url, meal)
+        ));
         meal.setCateringCompany(cateringCompanyRepository.findById(
                 UUID.fromString("12fcc746-b380-4f0b-a34c-6b110a615a94")).orElseThrow());
 

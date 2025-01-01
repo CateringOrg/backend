@@ -1,15 +1,7 @@
 package pl.edu.pw.ee.catering_backend.infrastructure.db;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -33,8 +25,7 @@ public class MealDb {
 
   private String description;
 
-  @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
-  @LazyCollection(LazyCollectionOption.FALSE)
+  @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<PhotoUrl> photoUrls;
 
   private BigDecimal price;
