@@ -74,10 +74,11 @@ public class OrdersService implements IOrdersService {
 
     @Override
     public List<OrderDto> getOrders(String userLogin) {
-        UserDb userDb = userRepository.findByLogin(userLogin).orElseThrow(() -> new NoSuchElementException("User with login " + userLogin + " not found"));
-        List<OrderDb> orders = orderRepository.findAll().stream()
-                .filter(orderDb -> orderDb.getClient().equals(userDb))
-                .toList();
+        // UserDb userDb = userRepository.findByLogin(userLogin).orElseThrow(() -> new NoSuchElementException("User with login " + userLogin + " not found"));
+        List<OrderDb> orders = orderRepository.findAll();
+//                .stream()
+//                .filter(orderDb -> orderDb.getClient().equals(userDb))
+//                .toList();
 
         List<OrderDto> orderDtos = orders.stream()
                 .map(orderMapper::mapDbToDomainModel)
